@@ -1,0 +1,61 @@
+android {
+    buildToolsVersion versions.build_tools
+    compileSdkVersion versions.sdk_compile
+    defaultConfig {
+        minSdkVersion versions.sdk_min
+        targetSdkVersion versions.sdk_target
+        versionCode versions.code
+        versionName versions.name
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    dexOptions {
+        javaMaxHeapSize "4g"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+    lintOptions {
+        warningsAsErrors true
+    }
+    sourceSets {
+        androidTest {
+            java.srcDirs += "src/uiTest/java"
+        }
+        test {
+            java.srcDirs += "src/uiTest/java"
+        }
+    }
+    packagingOptions {
+        pickFirst("META-INF/atomicfu.kotlin_module")
+        exclude 'META-INF/LICENSE'
+    }
+}
+
+dependencies {
+    implementation deps.stdlib
+    implementation deps.core
+    implementation deps.appcompat
+    implementation deps.lifecycle
+    implementation deps.zpack
+
+    implementation deps.material
+    implementation deps.lottie_dialog
+    implementation deps.gps_location
+
+    testImplementation deps.test_core
+    testImplementation deps.test_runner
+    testImplementation deps.test_rules
+    testImplementation deps.test_junit_ktx
+    testImplementation deps.robolectric
+
+    androidTestImplementation deps.test_core
+    androidTestImplementation deps.test_runner
+    androidTestImplementation deps.test_rules
+    androidTestImplementation deps.test_junit_ktx
+}
