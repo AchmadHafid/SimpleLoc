@@ -103,7 +103,7 @@ abstract class SimpleLocTrackerBase(
                 )
                 isRunning = true
                 attachObserver()
-                config.onRunningListener(isRestarted)
+                config.onRunningListener(this, isRestarted)
             }
             .addOnFailureListener(this::onError)
     }
@@ -114,7 +114,7 @@ abstract class SimpleLocTrackerBase(
 
         locationClient.removeLocationUpdates(locationCallback)
         if (stopState != SimpleLocTracker.StopState.DESTROYED_BY_LIFECYCLE) {
-            config.onStoppedListener(stopState)
+            config.onStoppedListener(this, stopState)
         }
     }
 
@@ -125,18 +125,18 @@ abstract class SimpleLocTrackerBase(
             is LocationServiceRepairError -> {
                 isEnabled = false
                 isRunning = false
-                config.onLocationServiceRepairErrorListener()
+                config.onLocationServiceRepairErrorListener(this)
             }
             else -> {
                 isEnabled = false
                 isRunning = false
-                config.onUnresolvableErrorListener(exception)
+                config.onUnresolvableErrorListener(this, exception)
             }
         }
     }
 
     protected fun resolveApiException(exception: ResolvableApiException, activity: Activity) {
-        exception.startResolutionForResult(activity, REQUEST_CODE_REPAIR)
+        exception.startResolutionForResult(activity, config.requestCode)
     }
 
     //endregion
@@ -172,7 +172,10 @@ abstract class SimpleLocTrackerBase(
                         it.lifecycle.removeObserver(this)
                         field = null
                         observers.clear()
-                        config.onStoppedListener(SimpleLocTracker.StopState.DESTROYED_BY_LIFECYCLE)
+                        config.onStoppedListener(
+                            this@SimpleLocTrackerBase,
+                            SimpleLocTracker.StopState.DESTROYED_BY_LIFECYCLE
+                        )
                     }
                 })
             }

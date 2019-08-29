@@ -39,11 +39,11 @@ class DemoActivity : AppCompatActivity(R.layout.activity_demo), SimpleLocClient 
             interval        = 5 * 1000L
             fastestInterval = 3 * 1000L
         }
-        onRunning { isRestarted ->
+        onRunning { _, isRestarted ->
             toastShort("Location tracking " + if (isRestarted) "re-started" else "started")
             button.text = "Stop Tracking"
         }
-        onStopped { state ->
+        onStopped { _, state ->
             val message = when (state) {
                 SimpleLocTracker.StopState.PAUSED_BY_LIFECYCLE    -> "Location tracking paused"
                 SimpleLocTracker.StopState.DESTROYED_BY_LIFECYCLE -> "Location tracking destroyed by lifecycle"
@@ -71,8 +71,8 @@ class DemoActivity : AppCompatActivity(R.layout.activity_demo), SimpleLocClient 
         onLocationServiceRepairError {
             toastShort("Location service is not available")
         }
-        onUnresolvableError {
-            toastShort("Location Setting ERROR: ${it.message}")
+        onUnresolvableError {_, exception ->
+            toastShort("Location Setting ERROR: ${exception.message}")
         }
     }
 

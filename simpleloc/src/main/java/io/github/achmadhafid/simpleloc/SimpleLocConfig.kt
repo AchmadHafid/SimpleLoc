@@ -6,16 +6,17 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationSettingsRequest
 
 data class SimpleLocConfig(
+    var requestCode: Int = SIMPLE_LOC_REQUEST_CODE,
     var isAutoStart: Boolean = false,
     var resolveAddress: Boolean = false,
     var locationRequest: LocationRequest = LocationRequest.create(),
-    var onRunningListener: (isRestarted: Boolean) -> Unit = {},
-    var onStoppedListener: (SimpleLocTracker.StopState) -> Unit = {},
+    var onRunningListener: (SimpleLocTracker, isRestarted: Boolean) -> Unit = {_, _ ->},
+    var onStoppedListener: (SimpleLocTracker, SimpleLocTracker.StopState) -> Unit = {_, _ -> },
     var onLocationFoundListener: (SimpleLocTracker, Location, List<Address>) -> Unit = { _, _, _ -> },
-    var onPermissionRationaleCanceledListener: () -> Unit = {},
-    var onOpenPermissionSettingCanceledListener: () -> Unit = {},
-    var onLocationServiceRepairErrorListener: () -> Unit = {},
-    var onUnresolvableErrorListener: (Exception) -> Unit = {}
+    var onPermissionRationaleCanceledListener: (SimpleLocTracker) -> Unit = {},
+    var onOpenPermissionSettingCanceledListener: (SimpleLocTracker) -> Unit = {},
+    var onLocationServiceRepairErrorListener: (SimpleLocTracker) -> Unit = {},
+    var onUnresolvableErrorListener: (SimpleLocTracker, Exception) -> Unit = {_, _ ->}
 )
 
 fun simpleLocConfig(builder: SimpleLocConfig.() -> Unit): SimpleLocConfig =
@@ -25,11 +26,11 @@ fun SimpleLocConfig.request(locationRequest: LocationRequest.() -> Unit) {
     this.locationRequest.apply(locationRequest)
 }
 
-fun SimpleLocConfig.onRunning(callback: (isRestarted: Boolean) -> Unit) {
+fun SimpleLocConfig.onRunning(callback: (SimpleLocTracker, isRestarted: Boolean) -> Unit) {
     onRunningListener = callback
 }
 
-fun SimpleLocConfig.onStopped(callback: (SimpleLocTracker.StopState) -> Unit) {
+fun SimpleLocConfig.onStopped(callback: (SimpleLocTracker, SimpleLocTracker.StopState) -> Unit) {
     onStoppedListener = callback
 }
 
@@ -37,19 +38,19 @@ fun SimpleLocConfig.onLocationFound(callback: (SimpleLocTracker, Location, List<
     onLocationFoundListener = callback
 }
 
-fun SimpleLocConfig.onPermissionRationaleCanceled(callback: () -> Unit) {
+fun SimpleLocConfig.onPermissionRationaleCanceled(callback: (SimpleLocTracker) -> Unit) {
     onPermissionRationaleCanceledListener = callback
 }
 
-fun SimpleLocConfig.onOpenPermissionSettingCanceled(callback: () -> Unit) {
+fun SimpleLocConfig.onOpenPermissionSettingCanceled(callback: (SimpleLocTracker) -> Unit) {
     onOpenPermissionSettingCanceledListener = callback
 }
 
-fun SimpleLocConfig.onLocationServiceRepairError(callback: () -> Unit) {
+fun SimpleLocConfig.onLocationServiceRepairError(callback: (SimpleLocTracker) -> Unit) {
     onLocationServiceRepairErrorListener = callback
 }
 
-fun SimpleLocConfig.onUnresolvableError(callback: (Exception) -> Unit) {
+fun SimpleLocConfig.onUnresolvableError(callback: (SimpleLocTracker, Exception) -> Unit) {
     onUnresolvableErrorListener = callback
 }
 

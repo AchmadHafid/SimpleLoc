@@ -37,6 +37,8 @@ fun <T> T.onLocationPermissionResult(
     rationaleDialogBuilder: LottieConfirmationDialog.() -> Unit,
     doNotAskAgainDialogBuilder: LottieConfirmationDialog.() -> Unit
 ) where T : FragmentActivity, T : SimpleLocClient {
+    if (locationTracker.config.requestCode != requestCode) return
+
     onLocationPermissionResult(
         requestCode, permissions, grantResults,
         rationaleDialogBuilder, doNotAskAgainDialogBuilder
@@ -48,7 +50,7 @@ fun <T> T.onLocationPermissionResult(
             PermissionResultUserResponse.RATIONALE_DIALOG_NEGATIVE,
             PermissionResultUserResponse.RATIONALE_DIALOG_CANCELED -> {
                 locationTracker.config
-                    .onPermissionRationaleCanceledListener()
+                    .onPermissionRationaleCanceledListener(locationTracker)
             }
             PermissionResultUserResponse.DO_NOT_ASK_AGAIN_DIALOG_POSITIVE -> {
                 locationTracker.isOpeningLocationPermissionSetting = true
@@ -56,7 +58,7 @@ fun <T> T.onLocationPermissionResult(
             PermissionResultUserResponse.DO_NOT_ASK_AGAIN_DIALOG_NEGATIVE,
             PermissionResultUserResponse.DO_NOT_ASK_AGAIN_DIALOG_CANCELED -> {
                 locationTracker.config
-                    .onOpenPermissionSettingCanceledListener()
+                    .onOpenPermissionSettingCanceledListener(locationTracker)
             }
         }
     }
@@ -71,6 +73,8 @@ fun <T> T.onLocationPermissionResult(
     rationaleDialogBuilder: LottieConfirmationDialog.() -> Unit,
     doNotAskAgainDialogBuilder: LottieConfirmationDialog.() -> Unit
 ) where T : Fragment, T : SimpleLocClient {
+    if (locationTracker.config.requestCode != requestCode) return
+
     onLocationPermissionResult(
         requestCode, permissions, grantResults,
         rationaleDialogBuilder, doNotAskAgainDialogBuilder
@@ -82,7 +86,7 @@ fun <T> T.onLocationPermissionResult(
             PermissionResultUserResponse.RATIONALE_DIALOG_NEGATIVE,
             PermissionResultUserResponse.RATIONALE_DIALOG_CANCELED -> {
                 locationTracker.config
-                    .onPermissionRationaleCanceledListener()
+                    .onPermissionRationaleCanceledListener(locationTracker)
             }
             PermissionResultUserResponse.DO_NOT_ASK_AGAIN_DIALOG_POSITIVE -> {
                 locationTracker.isOpeningLocationPermissionSetting = true
@@ -90,20 +94,36 @@ fun <T> T.onLocationPermissionResult(
             PermissionResultUserResponse.DO_NOT_ASK_AGAIN_DIALOG_NEGATIVE,
             PermissionResultUserResponse.DO_NOT_ASK_AGAIN_DIALOG_CANCELED -> {
                 locationTracker.config
-                    .onOpenPermissionSettingCanceledListener()
+                    .onOpenPermissionSettingCanceledListener(locationTracker)
             }
         }
     }
 }
 
-fun <T> SimpleLocClient.onLocationServiceRepairResult(
+fun <T> T.onLocationServiceRepairResult(
     requestCode: Int,
     resultCode: Int,
-    simpleLocTracker: T
-) where T : SimpleLocTracker, T : SimpleLocClientError {
-    if (requestCode == REQUEST_CODE_REPAIR && resultCode == Activity.RESULT_OK) {
-        simpleLocTracker.enable()
+    locationTracker: SimpleLocTrackerActivity
+) where T : FragmentActivity, T : SimpleLocClient {
+    if (locationTracker.config.requestCode != requestCode) return
+
+    if (resultCode == Activity.RESULT_OK) {
+        locationTracker.enable()
     } else {
-        simpleLocTracker.onError(LocationServiceRepairError)
+        locationTracker.onError(LocationServiceRepairError)
+    }
+}
+
+fun <T> T.onLocationServiceRepairResult(
+    requestCode: Int,
+    resultCode: Int,
+    locationTracker: SimpleLocTrackerFragment
+) where T : Fragment, T : SimpleLocClient {
+    if (locationTracker.config.requestCode != requestCode) return
+
+    if (resultCode == Activity.RESULT_OK) {
+        locationTracker.enable()
+    } else {
+        locationTracker.onError(LocationServiceRepairError)
     }
 }

@@ -30,7 +30,7 @@ class LocationServiceLauncherActivity : SimpleLocResolverActivity() {
             interval = 5 * 1000L
             fastestInterval = 3 * 1000L
         }
-        onRunning { onStartLocationService() }
+        onRunning {_, _ -> onStartLocationService() }
         onPermissionRationaleCanceled { onCanceled() }
         onOpenPermissionSettingCanceled { onCanceled() }
         onLocationServiceRepairError {
@@ -39,7 +39,7 @@ class LocationServiceLauncherActivity : SimpleLocResolverActivity() {
             }
             finish()
         }
-        onUnresolvableError {
+        onUnresolvableError {_, _ ->
             sharedPreferences.edit {
                 putInt("location_service_status", DemoLocationService.STATUS_UNKNOWN_ERROR)
             }

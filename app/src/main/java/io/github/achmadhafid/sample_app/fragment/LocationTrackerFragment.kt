@@ -37,11 +37,11 @@ class LocationTrackerFragment : Fragment(R.layout.fragment_location_tracker), Si
             interval        = 5 * 1000L
             fastestInterval = 3 * 1000L
         }
-        onRunning { isRestarted ->
+        onRunning { _, isRestarted ->
             btn?.text = "Stop Tracker"
             toastShort("Location tracking " + if (isRestarted) "re-started" else "started")
         }
-        onStopped { state ->
+        onStopped { _, state ->
             btn?.text = "Start Tracker"
             val message = when (state) {
                 SimpleLocTracker.StopState.PAUSED_BY_LIFECYCLE    -> "Location tracking paused"
@@ -66,8 +66,8 @@ class LocationTrackerFragment : Fragment(R.layout.fragment_location_tracker), Si
         onLocationServiceRepairError {
             toastShort("Location service is not available")
         }
-        onUnresolvableError {
-            toastShort("Location Setting ERROR: ${it.message}")
+        onUnresolvableError {_, exception ->
+            toastShort("Location Setting ERROR: ${exception.message}")
         }
     }
 

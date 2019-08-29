@@ -35,14 +35,14 @@ val Fragment.hasLocationPermission
 //endregion
 //region Permission Request
 
-fun Activity.requestLocationPermission(requestCode: Int = REQUEST_CODE_PERMISSION) =
+fun Activity.requestLocationPermission(requestCode: Int = SIMPLE_LOC_REQUEST_CODE) =
     requestPermissionCompat(LocationPermissions, requestCode)
 
-fun Fragment.requestLocationPermission(requestCode: Int = REQUEST_CODE_PERMISSION) =
+fun Fragment.requestLocationPermission(requestCode: Int = SIMPLE_LOC_REQUEST_CODE) =
     requestPermissions(LocationPermissions, requestCode)
 
 fun <T> Activity.withLocationPermission(
-    requestCode: Int = REQUEST_CODE_PERMISSION,
+    requestCode: Int = SIMPLE_LOC_REQUEST_CODE,
     defaultReturnValue: T? = null,
     onGranted: () -> T?
 ) = when {
@@ -51,14 +51,14 @@ fun <T> Activity.withLocationPermission(
 }
 
 fun Activity.withLocationPermission(
-    requestCode: Int = REQUEST_CODE_PERMISSION,
+    requestCode: Int = SIMPLE_LOC_REQUEST_CODE,
     onGranted: () -> Unit
 ) {
     withLocationPermission(requestCode, Unit, onGranted)
 }
 
 fun <T> Fragment.withLocationPermission(
-    requestCode: Int = REQUEST_CODE_PERMISSION,
+    requestCode: Int = SIMPLE_LOC_REQUEST_CODE,
     defaultReturnValue: T? = null,
     onGranted: () -> T?
 ) = when {
@@ -67,7 +67,7 @@ fun <T> Fragment.withLocationPermission(
 }
 
 fun Fragment.withLocationPermission(
-    requestCode: Int = REQUEST_CODE_PERMISSION,
+    requestCode: Int = SIMPLE_LOC_REQUEST_CODE,
     onGranted: () -> Unit
 ) {
     withLocationPermission(requestCode, Unit, onGranted)

@@ -33,11 +33,11 @@ class DemoLocationService : LifecycleService(), SimpleLocClient {
             interval        = 5 * 1000L
             fastestInterval = 3 * 1000L
         }
-        onRunning { isRestarted ->
+        onRunning { _, isRestarted ->
             onLocationTrackerRunning()
             d("Location tracking " + if (isRestarted) "re-started" else "started")
         }
-        onStopped { state ->
+        onStopped { _, state ->
             val message = when (state) {
                 SimpleLocTracker.StopState.PAUSED_BY_LIFECYCLE    -> "Never happen"
                 SimpleLocTracker.StopState.DESTROYED_BY_LIFECYCLE -> "Location tracking destroyed by lifecycle"
@@ -53,8 +53,8 @@ class DemoLocationService : LifecycleService(), SimpleLocClient {
                 tracker.disable()
             }
         }
-        onUnresolvableError {
-            d("Location Setting ERROR: ${it.message}")
+        onUnresolvableError { _, exception ->
+            d("Location Setting ERROR: ${exception.message}")
             onLocationTrackerStopped()
         }
     }

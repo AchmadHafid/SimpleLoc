@@ -41,7 +41,7 @@ class SimpleLocTrackerFragment(
 
     override fun enable() {
         if (!isEnabled) {
-            fragment.withLocationPermission {
+            fragment.withLocationPermission(config.requestCode) {
                 startTracker(false)
             }
         }
@@ -50,7 +50,7 @@ class SimpleLocTrackerFragment(
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     internal fun onStart() {
         if (isEnabled) {
-            fragment.withLocationPermission {
+            fragment.withLocationPermission(config.requestCode) {
                 startTracker(true)
             }
         }
