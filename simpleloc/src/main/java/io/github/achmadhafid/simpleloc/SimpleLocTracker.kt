@@ -4,8 +4,8 @@ interface SimpleLocTracker {
 
     val isRunning: Boolean
 
-    fun enable()
-    fun disable()
+    fun enable(isForce: Boolean = false)
+    fun disable(isForce: Boolean = false)
 
     enum class StopState {
         PAUSED_BY_LIFECYCLE,
@@ -18,12 +18,12 @@ interface SimpleLocTracker {
 
 //region Extensions
 
-fun SimpleLocTracker.toggle() {
-    enableOrDisable { !isRunning }
+fun SimpleLocTracker.toggle(force: Boolean = false) {
+    enableOrDisable(force) { !isRunning }
 }
 
-fun SimpleLocTracker.enableOrDisable(premise: () -> Boolean) {
-    if (premise()) enable() else disable()
+fun SimpleLocTracker.enableOrDisable(force: Boolean = false, premise: () -> Boolean) {
+    if (premise()) enable(force) else disable(force)
 }
 
 //endregion

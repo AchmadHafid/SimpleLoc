@@ -35,7 +35,9 @@ class SimpleLocTrackerActivity(
 
     //region Turn On
 
-    override fun enable() {
+    override fun enable(isForce: Boolean) {
+        if (isForce) disable(isForce)
+
         if (!isEnabled) {
             activity.withLocationPermission(config.requestCode) {
                 startTracker(false)
@@ -65,10 +67,6 @@ class SimpleLocTrackerActivity(
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     internal fun onStop() {
         disable(SimpleLocTracker.StopState.PAUSED_BY_LIFECYCLE)
-    }
-
-    override fun disable() {
-        disable(SimpleLocTracker.StopState.STOPPED_BY_USER)
     }
 
     override fun disable(stopState: SimpleLocTracker.StopState) {

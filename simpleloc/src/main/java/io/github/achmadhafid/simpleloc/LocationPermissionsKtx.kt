@@ -26,10 +26,10 @@ private val LocationPermissions = arrayOf(
 
 //region Permission Checker
 
-val Context.hasLocationPermission
+val Context.hasLocationPermissions
     get() = arePermissionsGranted(LocationPermissions)
 
-val Fragment.hasLocationPermission
+val Fragment.hasLocationPermissions
     get() = requireContext().arePermissionsGranted(LocationPermissions)
 
 //endregion
@@ -46,7 +46,7 @@ fun <T> Activity.withLocationPermission(
     defaultReturnValue: T? = null,
     onGranted: () -> T?
 ) = when {
-    belowMarshmallow() || hasLocationPermission -> onGranted()
+    belowMarshmallow() || hasLocationPermissions -> onGranted()
     else -> defaultReturnValue.also { requestLocationPermission(requestCode) }
 }
 
@@ -62,7 +62,7 @@ fun <T> Fragment.withLocationPermission(
     defaultReturnValue: T? = null,
     onGranted: () -> T?
 ) = when {
-    belowMarshmallow() || hasLocationPermission -> onGranted()
+    belowMarshmallow() || hasLocationPermissions -> onGranted()
     else -> defaultReturnValue.also { requestLocationPermission(requestCode) }
 }
 

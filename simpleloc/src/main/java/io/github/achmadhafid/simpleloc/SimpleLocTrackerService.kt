@@ -33,9 +33,11 @@ class SimpleLocTrackerService(
 
     //region Turn On
 
-    override fun enable() {
+    override fun enable(isForce: Boolean) {
+        if (isForce) disable(isForce)
+
         if (!isEnabled) {
-            if (service.hasLocationPermission) {
+            if (service.hasLocationPermissions) {
                 startTracker(false)
             } else {
                 onError(IllegalStateException())
@@ -54,10 +56,6 @@ class SimpleLocTrackerService(
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     internal fun onDestroy() {
         disable(SimpleLocTracker.StopState.DESTROYED_BY_LIFECYCLE)
-    }
-
-    override fun disable() {
-        disable(SimpleLocTracker.StopState.STOPPED_BY_USER)
     }
 
     override fun disable(stopState: SimpleLocTracker.StopState) {

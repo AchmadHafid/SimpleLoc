@@ -91,6 +91,16 @@ abstract class SimpleLocTrackerBase(
         }
     }
 
+    override fun disable(isForce: Boolean) {
+        if (isForce) {
+            isEnabled = false
+            isRunning = false
+            locationClient.removeLocationUpdates(locationCallback)
+        } else {
+            disable(SimpleLocTracker.StopState.STOPPED_BY_USER)
+        }
+    }
+
     protected fun startTracker(isRestarted: Boolean) {
         if (isRunning) return
 
@@ -168,14 +178,19 @@ abstract class SimpleLocTrackerBase(
                 it.lifecycle.addObserver(object : LifecycleObserver{
                     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
                     fun onDestroy() {
-                        detachObservers()
                         it.lifecycle.removeObserver(this)
+                        detachObservers()
                         field = null
                         observers.clear()
-                        config.onStoppedListener(
-                            this@SimpleLocTrackerBase,
-                            SimpleLocTracker.StopState.DESTROYED_BY_LIFECYCLE
-                        )
+                        //region if paused, disable flag then call callback
+                        if (isEnabled) {
+                            isEnabled = false
+                            config.onStoppedListener(
+                                this@SimpleLocTrackerBase,
+                                SimpleLocTracker.StopState.DESTROYED_BY_LIFECYCLE
+                            )
+                        }
+                        //endregion
                     }
                 })
             }
