@@ -22,7 +22,7 @@ data class SimpleLocConfig(
 fun simpleLocConfig(builder: SimpleLocConfig.() -> Unit): SimpleLocConfig =
     SimpleLocConfig().apply(builder)
 
-fun SimpleLocConfig.request(locationRequest: LocationRequest.() -> Unit) {
+fun SimpleLocConfig.withRequest(locationRequest: LocationRequest.() -> Unit) {
     this.locationRequest.apply(locationRequest)
 }
 

@@ -19,20 +19,26 @@ import io.github.achmadhafid.simpleloc.onPermissionRationaleCanceled
 import io.github.achmadhafid.simpleloc.onRunning
 import io.github.achmadhafid.simpleloc.onStopped
 import io.github.achmadhafid.simpleloc.onUnresolvableError
-import io.github.achmadhafid.simpleloc.request
+import io.github.achmadhafid.simpleloc.withRequest
 import io.github.achmadhafid.simpleloc.simpleLocTracker
 import io.github.achmadhafid.simpleloc.toggle
 import io.github.achmadhafid.zpack.delegate.fragmentView
 import io.github.achmadhafid.zpack.ktx.toastShort
 
+@Suppress("MagicNumber")
 class LocationTrackerFragment : Fragment(R.layout.fragment_location_tracker), SimpleLocClient {
+
+    //region View
 
     private val btn by fragmentView<MaterialButton>(R.id.btn)
 
+    //endregion
+    //region Location Tracker
+
     private val locationTracker = simpleLocTracker {
-        isAutoStart = true
+        isAutoStart    = true
         resolveAddress = true
-        request {
+        withRequest {
             priority        = LocationRequest.PRIORITY_HIGH_ACCURACY
             interval        = 5 * 1000L
             fastestInterval = 3 * 1000L
@@ -51,11 +57,8 @@ class LocationTrackerFragment : Fragment(R.layout.fragment_location_tracker), Si
             }
             toastShort(message)
         }
-        onLocationFound { tracker, location, addresses ->
+        onLocationFound { _, location, addresses ->
             toastShort("Location found, accuracy: ${location.accuracy}, total address: ${addresses.size}")
-            if (location.accuracy < 20) {
-                tracker.disable()
-            }
         }
         onPermissionRationaleCanceled {
             toastShort("Location Permissions canceled by user")
@@ -70,6 +73,10 @@ class LocationTrackerFragment : Fragment(R.layout.fragment_location_tracker), Si
             toastShort("Location Setting ERROR: ${exception.message}")
         }
     }
+
+    //endregion
+
+    //region Lifecycle Callback
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -93,5 +100,7 @@ class LocationTrackerFragment : Fragment(R.layout.fragment_location_tracker), Si
         super.onActivityResult(requestCode, resultCode, data)
         onLocationServiceRepairResult(requestCode, resultCode, locationTracker)
     }
+
+    //endregion
 
 }

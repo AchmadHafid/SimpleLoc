@@ -1,31 +1,57 @@
 package io.github.achmadhafid.sample_app
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.button.MaterialButton
 import io.github.achmadhafid.sample_app.activity.DemoActivity
 import io.github.achmadhafid.sample_app.fragment.FragmentDemoActivity
 import io.github.achmadhafid.sample_app.service.ServiceDemoActivity
-import io.github.achmadhafid.zpack.ktx.bindView
+import io.github.achmadhafid.simpleloc.SimpleLocClient
+import io.github.achmadhafid.simplepref.SimplePref
+import io.github.achmadhafid.simplepref.simplePref
 import io.github.achmadhafid.zpack.ktx.onSingleClick
+import io.github.achmadhafid.zpack.ktx.setMaterialToolbar
 import io.github.achmadhafid.zpack.ktx.startActivity
+import io.github.achmadhafid.zpack.ktx.toggleTheme
 
-class MainActivity: AppCompatActivity(R.layout.activity_main) {
+@Suppress("MagicNumber")
+class MainActivity: AppCompatActivity(R.layout.activity_main), SimpleLocClient, SimplePref {
 
-    private val btnActivity: MaterialButton by bindView(R.id.btn_demo_activity)
-    private val btnFragment: MaterialButton by bindView(R.id.btn_demo_fragment)
-    private val btnService: MaterialButton by bindView(R.id.btn_demo_service)
+    //region Preference
+
+    private var appTheme: Int? by simplePref("app_theme")
+
+    //endregion
+    //region Lifecycle Callback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        btnActivity.onSingleClick {
+        setMaterialToolbar(R.id.toolbar)
+        findViewById<MaterialButton>(R.id.btn_demo_activity).onSingleClick {
             startActivity<DemoActivity>()
         }
-        btnFragment.onSingleClick {
+        findViewById<MaterialButton>(R.id.btn_demo_fragment).onSingleClick {
             startActivity<FragmentDemoActivity>()
         }
-        btnService.onSingleClick {
+        findViewById<MaterialButton>(R.id.btn_demo_service).onSingleClick {
             startActivity<ServiceDemoActivity>()
         }
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.main_toolbar, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.action_toggle_theme -> {
+            appTheme = toggleTheme()
+            true
+        }
+        else -> super.onOptionsItemSelected(item)
+    }
+
+    //endregion
 }

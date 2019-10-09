@@ -4,11 +4,9 @@ import android.annotation.TargetApi
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
-import androidx.core.content.edit
 import androidx.lifecycle.LifecycleService
 import com.google.android.gms.location.LocationRequest
 import io.github.achmadhafid.sample_app.R
@@ -18,26 +16,40 @@ import io.github.achmadhafid.simpleloc.onLocationFound
 import io.github.achmadhafid.simpleloc.onRunning
 import io.github.achmadhafid.simpleloc.onStopped
 import io.github.achmadhafid.simpleloc.onUnresolvableError
-import io.github.achmadhafid.simpleloc.request
+import io.github.achmadhafid.simpleloc.withRequest
 import io.github.achmadhafid.simpleloc.simpleLocTracker
+import io.github.achmadhafid.simplepref.SimplePref
+import io.github.achmadhafid.simplepref.simplePref
 import io.github.achmadhafid.zpack.ktx.atLeastOreo
 import io.github.achmadhafid.zpack.ktx.d
 import io.github.achmadhafid.zpack.ktx.notificationManager
+import io.github.achmadhafid.zpack.ktx.toastShort
 
-class DemoLocationService : LifecycleService(), SimpleLocClient {
+@Suppress("MagicNumber")
+class DemoLocationService : LifecycleService(), SimpleLocClient, SimplePref {
+
+    //region Preference
+
+    private var serviceStatus: Int? by simplePref("service_status")
+
+    //endregion
+    //region Location Tracker
 
     private val locationTracker = simpleLocTracker {
         resolveAddress = true
-        request {
+        withRequest {
             priority        = LocationRequest.PRIORITY_HIGH_ACCURACY
             interval        = 5 * 1000L
             fastestInterval = 3 * 1000L
         }
         onRunning { _, isRestarted ->
-            onLocationTrackerRunning()
-            d("Location tracking " + if (isRestarted) "re-started" else "started")
+            serviceStatus = STATUS_RUNNING
+            val message = "Location tracking " + if (isRestarted) "re-started" else "started"
+            d(message)
+            toastShort(message)
         }
         onStopped { _, state ->
+            serviceStatus = STATUS_STOPPED
             val message = when (state) {
                 SimpleLocTracker.StopState.PAUSED_BY_LIFECYCLE    -> "Never happen"
                 SimpleLocTracker.StopState.DESTROYED_BY_LIFECYCLE -> "Location tracking destroyed by lifecycle"
@@ -45,19 +57,24 @@ class DemoLocationService : LifecycleService(), SimpleLocClient {
                 SimpleLocTracker.StopState.STOPPED_BY_USER        -> "Location tracking stopped by user"
             }
             d(message)
-            onLocationTrackerStopped()
+            toastShort(message)
         }
-        onLocationFound { tracker, location, addresses ->
-            d("Location found, accuracy: ${location.accuracy}, total address: ${addresses.size}")
-            if (location.accuracy < 10) {
-                tracker.disable()
-            }
+        onLocationFound { _, location, addresses ->
+            val message = "Location found, accuracy: ${location.accuracy}, total address: ${addresses.size}"
+            d(message)
+            toastShort(message)
         }
         onUnresolvableError { _, exception ->
-            d("Location Setting ERROR: ${exception.message}")
-            onLocationTrackerStopped()
+            serviceStatus = STATUS_STOPPED
+            val message = "Location Setting ERROR: ${exception.message}"
+            d(message)
+            toastShort(message)
         }
     }
+
+    //endregion
+    //region Notification
+
     private val notification by lazy {
         NotificationCompat.Builder(this, "simpleloc")
             .setSmallIcon(R.drawable.ic_my_location_24dp)
@@ -67,6 +84,10 @@ class DemoLocationService : LifecycleService(), SimpleLocClient {
             .setContentText("Running location tracker")
             .build()
     }
+
+    //endregion
+
+    //region Lifecycle Callback
 
     override fun onCreate() {
         super.onCreate()
@@ -102,7 +123,10 @@ class DemoLocationService : LifecycleService(), SimpleLocClient {
     override fun onDestroy() {
         super.onDestroy()
         isForeground = false
+        serviceStatus = STATUS_STOPPED
     }
+
+    //endregion
 
     companion object {
         private var isForeground: Boolean = false
@@ -112,22 +136,6 @@ class DemoLocationService : LifecycleService(), SimpleLocClient {
         const val STATUS_PERMISSION_CANCELED = -1
         const val STATUS_REPAIR_ERROR        = -2
         const val STATUS_UNKNOWN_ERROR       = -3
-    }
-
-    private val sharedPreferences by lazy {
-        getSharedPreferences(getString(R.string.app_name), Context.MODE_PRIVATE)
-    }
-
-    private fun onLocationTrackerRunning() {
-        sharedPreferences.edit {
-            putInt("location_service_status", STATUS_RUNNING)
-        }
-    }
-
-    private fun onLocationTrackerStopped() {
-        sharedPreferences.edit {
-            putInt("location_service_status", STATUS_STOPPED)
-        }
     }
 
 }

@@ -41,6 +41,8 @@ dependencies {
     implementation deps.core
     implementation deps.appcompat
     implementation deps.lifecycle
+    implementation deps.activity
+    implementation deps.fragment
     implementation deps.zpack
 
     implementation deps.material

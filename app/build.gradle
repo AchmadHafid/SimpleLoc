@@ -26,4 +26,5 @@ dependencies {
     implementation project(":simpleloc")
 
     implementation deps.constraint_layout
+    implementation deps.simple_pref
 }

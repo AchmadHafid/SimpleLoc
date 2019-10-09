@@ -1,6 +1,7 @@
 package io.github.achmadhafid.sample_app.activity
 
 import android.content.Intent
+import android.location.Location
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -20,47 +21,80 @@ import io.github.achmadhafid.simpleloc.onPermissionRationaleCanceled
 import io.github.achmadhafid.simpleloc.onRunning
 import io.github.achmadhafid.simpleloc.onStopped
 import io.github.achmadhafid.simpleloc.onUnresolvableError
-import io.github.achmadhafid.simpleloc.request
+import io.github.achmadhafid.simpleloc.openInGMaps
 import io.github.achmadhafid.simpleloc.simpleLocTracker
 import io.github.achmadhafid.simpleloc.toggle
+import io.github.achmadhafid.simpleloc.withRequest
+import io.github.achmadhafid.simplepref.SimplePref
+import io.github.achmadhafid.simplepref.simplePref
 import io.github.achmadhafid.zpack.ktx.bindView
+import io.github.achmadhafid.zpack.ktx.hide
+import io.github.achmadhafid.zpack.ktx.onSingleClick
 import io.github.achmadhafid.zpack.ktx.setMaterialToolbar
+import io.github.achmadhafid.zpack.ktx.show
+import io.github.achmadhafid.zpack.ktx.showIf
 import io.github.achmadhafid.zpack.ktx.toastShort
 import io.github.achmadhafid.zpack.ktx.toggleTheme
+import kotlinx.android.synthetic.main.activity_demo.btnShowLocation
 
-class DemoActivity : AppCompatActivity(R.layout.activity_demo), SimpleLocClient {
+@Suppress("MagicNumber")
+class DemoActivity : AppCompatActivity(R.layout.activity_demo), SimpleLocClient, SimplePref {
+
+    //region Preference
+
+    private var appTheme: Int? by simplePref("app_theme")
+    private var isRestarting by simplePref { false }
+    private var isRunning by simplePref { false }
+
+    //endregion
+    //region View
 
     private val button: MaterialButton by bindView(R.id.btn)
+    private val buttonShowLocation: MaterialButton by bindView(R.id.btnShowLocation)
+
+    //endregion
+    //region Location Tracker
+
+    private var currentLocation: Location? = null
 
     private val locationTracker = simpleLocTracker {
         resolveAddress = true
-        request {
+        withRequest {
             priority        = LocationRequest.PRIORITY_HIGH_ACCURACY
             interval        = 5 * 1000L
             fastestInterval = 3 * 1000L
         }
         onRunning { _, isRestarted ->
-            toastShort("Location tracking " + if (isRestarted) "re-started" else "started")
+            isRunning = true
             button.text = "Stop Tracking"
+            toastShort("Location tracking " + if (isRestarted) "re-started" else "started")
         }
         onStopped { _, state ->
+            isRunning = false
+            btnShowLocation.hide()
+
             val message = when (state) {
-                SimpleLocTracker.StopState.PAUSED_BY_LIFECYCLE    -> "Location tracking paused"
-                SimpleLocTracker.StopState.DESTROYED_BY_LIFECYCLE -> "Location tracking destroyed by lifecycle"
-                SimpleLocTracker.StopState.STOPPED_BY_SYSTEM      -> "Location tracking become unavailable".also {
+                SimpleLocTracker.StopState.PAUSED_BY_LIFECYCLE -> "Location tracking paused"
+                SimpleLocTracker.StopState.DESTROYED_BY_LIFECYCLE -> {
+                    if (isRestarting) {
+                        isRunning = true
+                        return@onStopped
+                    } else {
+                        "Location tracking destroyed by lifecycle"
+                    }
+                }
+                SimpleLocTracker.StopState.STOPPED_BY_SYSTEM -> "Location tracking become unavailable".also {
                     button.text = "Start Tracking"
                 }
-                SimpleLocTracker.StopState.STOPPED_BY_USER        -> "Location tracking stopped by user".also {
+                SimpleLocTracker.StopState.STOPPED_BY_USER -> "Location tracking stopped by user".also {
                     button.text = "Start Tracking"
                 }
             }
             toastShort(message)
         }
-        onLocationFound { tracker, location, addresses ->
-            toastShort("Location found, accuracy: ${location.accuracy}, total address: ${addresses.size}")
-            if (location.accuracy < 20) {
-                tracker.disable()
-            }
+        onLocationFound { _, location, _ ->
+            currentLocation = location
+            btnShowLocation.show()
         }
         onPermissionRationaleCanceled {
             toastShort("Location Permissions canceled by user")
@@ -76,15 +110,32 @@ class DemoActivity : AppCompatActivity(R.layout.activity_demo), SimpleLocClient 
         }
     }
 
+    //endregion
+
+    //region Lifecycle Callback
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setMaterialToolbar(R.id.toolbar)
-        findViewById<MaterialButton>(R.id.btn).setOnClickListener {
+        button.onSingleClick {
             locationTracker.toggle()
         }
+        buttonShowLocation.onSingleClick {
+            currentLocation?.openInGMaps(this)
+        }
+        buttonShowLocation.showIf { currentLocation != null }
     }
 
-    //region Toolbar Menu
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        isRestarting = true
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        isRestarting = false
+        if (isRunning) locationTracker.enable()
+    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_toolbar, menu)
@@ -93,13 +144,11 @@ class DemoActivity : AppCompatActivity(R.layout.activity_demo), SimpleLocClient 
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         R.id.action_toggle_theme -> {
-            toggleTheme()
+            appTheme = toggleTheme()
             true
         }
         else -> super.onOptionsItemSelected(item)
     }
-
-    //endregion
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -118,5 +167,7 @@ class DemoActivity : AppCompatActivity(R.layout.activity_demo), SimpleLocClient 
         super.onActivityResult(requestCode, resultCode, data)
         onLocationServiceRepairResult(requestCode, resultCode, locationTracker)
     }
+
+    //endregion
 
 }
