@@ -54,7 +54,7 @@ Add the dependency
 ```groovy
 dependencies {
   ...
-  implementation "com.github.AchmadHafid:SimpleLoc:1.0.5"
+  implementation "com.github.AchmadHafid:SimpleLoc:1.0.6"
   ...
 }
 ```
@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main), SimpleLocClient 
       // Set configurations and callback handlers here, e.g:
       isAutoStart = true // run automatically
     }
-    
+
     // 3. Optional, start it manually if you want
     private fun startLocationTracking() {
       locationTracker.enable()

@@ -2,12 +2,14 @@ package io.github.achmadhafid.sample_app.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.LocationRequest
-import com.google.android.material.button.MaterialButton
 import io.github.achmadhafid.sample_app.Dialog
 import io.github.achmadhafid.sample_app.R
+import io.github.achmadhafid.sample_app.databinding.FragmentLocationTrackerBinding
 import io.github.achmadhafid.simpleloc.SimpleLocClient
 import io.github.achmadhafid.simpleloc.SimpleLocTracker
 import io.github.achmadhafid.simpleloc.onLocationFound
@@ -19,18 +21,18 @@ import io.github.achmadhafid.simpleloc.onPermissionRationaleCanceled
 import io.github.achmadhafid.simpleloc.onRunning
 import io.github.achmadhafid.simpleloc.onStopped
 import io.github.achmadhafid.simpleloc.onUnresolvableError
-import io.github.achmadhafid.simpleloc.withRequest
 import io.github.achmadhafid.simpleloc.simpleLocTracker
 import io.github.achmadhafid.simpleloc.toggle
-import io.github.achmadhafid.zpack.delegate.fragmentView
+import io.github.achmadhafid.simpleloc.withRequest
 import io.github.achmadhafid.zpack.ktx.toastShort
 
 @Suppress("MagicNumber")
 class LocationTrackerFragment : Fragment(R.layout.fragment_location_tracker), SimpleLocClient {
 
-    //region View
+    //region View Binding
 
-    private val btn by fragmentView<MaterialButton>(R.id.btn)
+    private var _binding: FragmentLocationTrackerBinding? = null
+    private val binding get() = _binding!!
 
     //endregion
     //region Location Tracker
@@ -44,11 +46,11 @@ class LocationTrackerFragment : Fragment(R.layout.fragment_location_tracker), Si
             fastestInterval = 3 * 1000L
         }
         onRunning { _, isRestarted ->
-            btn?.text = "Stop Tracker"
+            binding.btn.text = "Stop Tracker"
             toastShort("Location tracking " + if (isRestarted) "re-started" else "started")
         }
         onStopped { _, state ->
-            btn?.text = "Start Tracker"
+            binding.btn.text = "Start Tracker"
             val message = when (state) {
                 SimpleLocTracker.StopState.PAUSED_BY_LIFECYCLE    -> "Location tracking paused"
                 SimpleLocTracker.StopState.DESTROYED_BY_LIFECYCLE -> "Location tracking destroyed by lifecycle"
@@ -78,9 +80,23 @@ class LocationTrackerFragment : Fragment(R.layout.fragment_location_tracker), Si
 
     //region Lifecycle Callback
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentLocationTrackerBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        btn?.setOnClickListener { locationTracker.toggle() }
+        binding.btn.setOnClickListener { locationTracker.toggle() }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onRequestPermissionsResult(
@@ -100,6 +116,8 @@ class LocationTrackerFragment : Fragment(R.layout.fragment_location_tracker), Si
         super.onActivityResult(requestCode, resultCode, data)
         onLocationServiceRepairResult(requestCode, resultCode, locationTracker)
     }
+
+
 
     //endregion
 

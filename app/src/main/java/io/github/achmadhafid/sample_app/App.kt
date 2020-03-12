@@ -16,3 +16,5 @@ class App: Application(), SimplePrefLifecycleOwner by SimplePrefApplication() {
         appTheme?.let { applyTheme(it) }
     }
 }
+
+//TODO("Use view binding")

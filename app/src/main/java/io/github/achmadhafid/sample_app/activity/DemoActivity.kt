@@ -10,6 +10,7 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.material.button.MaterialButton
 import io.github.achmadhafid.sample_app.Dialog
 import io.github.achmadhafid.sample_app.R
+import io.github.achmadhafid.sample_app.databinding.ActivityDemoBinding
 import io.github.achmadhafid.simpleloc.SimpleLocClient
 import io.github.achmadhafid.simpleloc.SimpleLocTracker
 import io.github.achmadhafid.simpleloc.onLocationFound
@@ -38,7 +39,7 @@ import io.github.achmadhafid.zpack.ktx.toggleTheme
 import kotlinx.android.synthetic.main.activity_demo.btnShowLocation
 
 @Suppress("MagicNumber")
-class DemoActivity : AppCompatActivity(R.layout.activity_demo), SimpleLocClient, SimplePref {
+class DemoActivity : AppCompatActivity(), SimpleLocClient, SimplePref {
 
     //region Preference
 
@@ -47,10 +48,11 @@ class DemoActivity : AppCompatActivity(R.layout.activity_demo), SimpleLocClient,
     private var isRunning by simplePref { false }
 
     //endregion
-    //region View
+    //region View Binding
 
-    private val button: MaterialButton by bindView(R.id.btn)
-    private val buttonShowLocation: MaterialButton by bindView(R.id.btnShowLocation)
+    private val binding: ActivityDemoBinding by lazy {
+        ActivityDemoBinding.inflate(layoutInflater)
+    }
 
     //endregion
     //region Location Tracker
@@ -66,7 +68,7 @@ class DemoActivity : AppCompatActivity(R.layout.activity_demo), SimpleLocClient,
         }
         onRunning { _, isRestarted ->
             isRunning = true
-            button.text = "Stop Tracking"
+            binding.btn.text = "Stop Tracking"
             toastShort("Location tracking " + if (isRestarted) "re-started" else "started")
         }
         onStopped { _, state ->
@@ -84,10 +86,10 @@ class DemoActivity : AppCompatActivity(R.layout.activity_demo), SimpleLocClient,
                     }
                 }
                 SimpleLocTracker.StopState.STOPPED_BY_SYSTEM -> "Location tracking become unavailable".also {
-                    button.text = "Start Tracking"
+                    binding.btn.text = "Start Tracking"
                 }
                 SimpleLocTracker.StopState.STOPPED_BY_USER -> "Location tracking stopped by user".also {
-                    button.text = "Start Tracking"
+                    binding.btn.text = "Start Tracking"
                 }
             }
             toastShort(message)
@@ -116,14 +118,15 @@ class DemoActivity : AppCompatActivity(R.layout.activity_demo), SimpleLocClient,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(binding.root)
         setMaterialToolbar(R.id.toolbar)
-        button.onSingleClick {
+        binding.btn.onSingleClick {
             locationTracker.toggle()
         }
-        buttonShowLocation.onSingleClick {
+        binding.btnShowLocation.onSingleClick {
             currentLocation?.openInGMaps(this)
         }
-        buttonShowLocation.showIf { currentLocation != null }
+        binding.btnShowLocation.showIf { currentLocation != null }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -4,16 +4,21 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.button.MaterialButton
+import androidx.lifecycle.observe
 import io.github.achmadhafid.sample_app.R
+import io.github.achmadhafid.sample_app.databinding.ActivityServiceDemoBinding
 import io.github.achmadhafid.simpleloc.SimpleLocClient
 import io.github.achmadhafid.simplepref.SimplePref
 import io.github.achmadhafid.simplepref.livedata.simplePrefLiveData
 import io.github.achmadhafid.simplepref.simplePref
-import io.github.achmadhafid.zpack.ktx.*
+import io.github.achmadhafid.zpack.ktx.onSingleClick
+import io.github.achmadhafid.zpack.ktx.setMaterialToolbar
+import io.github.achmadhafid.zpack.ktx.startActivity
+import io.github.achmadhafid.zpack.ktx.stopService
+import io.github.achmadhafid.zpack.ktx.toastShort
+import io.github.achmadhafid.zpack.ktx.toggleTheme
 
-class ServiceDemoActivity : AppCompatActivity(R.layout.activity_service_demo),
-    SimpleLocClient, SimplePref {
+class ServiceDemoActivity : AppCompatActivity(), SimpleLocClient, SimplePref {
 
     //region Preference
 
@@ -22,25 +27,29 @@ class ServiceDemoActivity : AppCompatActivity(R.layout.activity_service_demo),
     private val serviceStatus: Int? by simplePref("service_status")
 
     //endregion
-    //region View
+    //region View Binding
 
-    private val btn: MaterialButton by bindView(R.id.btn)
+    private val binding: ActivityServiceDemoBinding by lazy {
+        ActivityServiceDemoBinding.inflate(layoutInflater)
+    }
 
     //endregion
-
     //region Lifecycle Callback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(binding.root)
         setMaterialToolbar(R.id.toolbar)
-        btn.onSingleClick {
+
+        binding.btn.onSingleClick {
             if (serviceStatus == DemoLocationService.STATUS_RUNNING)
                 stopService<DemoLocationService>()
             else
                 startActivity<LocationServiceLauncherActivity>()
         }
-        simplePrefLiveData(serviceStatus, ::serviceStatus) {
-            btn.text = when (it) {
+
+        simplePrefLiveData(serviceStatus, ::serviceStatus).observe(this) {
+            binding.btn.text = when (it) {
                 DemoLocationService.STATUS_RUNNING -> "Stop Location Service"
                 else -> "Start Location Service"
             }

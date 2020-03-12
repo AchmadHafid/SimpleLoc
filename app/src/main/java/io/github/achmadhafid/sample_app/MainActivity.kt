@@ -4,8 +4,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.button.MaterialButton
 import io.github.achmadhafid.sample_app.activity.DemoActivity
+import io.github.achmadhafid.sample_app.databinding.ActivityMainBinding
 import io.github.achmadhafid.sample_app.fragment.FragmentDemoActivity
 import io.github.achmadhafid.sample_app.service.ServiceDemoActivity
 import io.github.achmadhafid.simpleloc.SimpleLocClient
@@ -16,27 +16,37 @@ import io.github.achmadhafid.zpack.ktx.setMaterialToolbar
 import io.github.achmadhafid.zpack.ktx.startActivity
 import io.github.achmadhafid.zpack.ktx.toggleTheme
 
-@Suppress("MagicNumber")
-class MainActivity: AppCompatActivity(R.layout.activity_main), SimpleLocClient, SimplePref {
+class MainActivity: AppCompatActivity(), SimpleLocClient, SimplePref {
 
     //region Preference
 
     private var appTheme: Int? by simplePref("app_theme")
 
     //endregion
+    //region View Binding
+
+    private val binding: ActivityMainBinding by lazy {
+        ActivityMainBinding.inflate(layoutInflater)
+    }
+
+    //endregion
     //region Lifecycle Callback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setContentView(binding.root)
         setMaterialToolbar(R.id.toolbar)
-        findViewById<MaterialButton>(R.id.btn_demo_activity).onSingleClick {
-            startActivity<DemoActivity>()
-        }
-        findViewById<MaterialButton>(R.id.btn_demo_fragment).onSingleClick {
-            startActivity<FragmentDemoActivity>()
-        }
-        findViewById<MaterialButton>(R.id.btn_demo_service).onSingleClick {
-            startActivity<ServiceDemoActivity>()
+
+        binding.apply {
+            btnDemoActivity.onSingleClick {
+                startActivity<DemoActivity>()
+            }
+            btnDemoFragment.onSingleClick {
+                startActivity<FragmentDemoActivity>()
+            }
+            btnDemoService.onSingleClick {
+                startActivity<ServiceDemoActivity>()
+            }
         }
     }
 
