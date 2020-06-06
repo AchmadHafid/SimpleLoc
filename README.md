@@ -1,9 +1,3 @@
-    <style name="AppTheme.Transparent" parent="SimpleLoc.ResolverActivityTheme">
-        <item name="android:statusBarColor">@android:color/transparent</item>
-        <item name="android:navigationBarColor">?attr/colorSurface</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
-    </style># SimpleLoc
-
 [![Release](https://jitpack.io/v/AchmadHafid/SimpleLoc.svg)](https://jitpack.io/#AchmadHafid/SimpleLoc)
 [![API](https://img.shields.io/badge/API-21%2B-brightgreen.svg?style=flat)](https://android-arsenal.com/api?level=21)
 
