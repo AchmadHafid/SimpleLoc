@@ -2,5 +2,7 @@
 <resources>
 
     <dimen name="lottie_dialog_animation_padding">16dp</dimen>
+    <dimen name="large_fit">48dp</dimen>
+    <dimen name="huge_fit">192dp</dimen>
 
 </resources>

@@ -2,7 +2,7 @@ package io.github.achmadhafid.simpleloc
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
-import io.github.achmadhafid.lottie_dialog.LottieConfirmationDialog
+import io.github.achmadhafid.lottie_dialog.core.LottieConfirmationDialog
 
 abstract class SimpleLocResolverActivity :
     AppCompatActivity(R.layout.simpleloc_resolver_activity), SimpleLocClient {
@@ -24,6 +24,7 @@ abstract class SimpleLocResolverActivity :
         )
     }
 
+    @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         onLocationServiceRepairResult(requestCode, resultCode, locationTracker)

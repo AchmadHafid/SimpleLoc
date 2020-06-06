@@ -13,7 +13,7 @@ import io.github.achmadhafid.simpleloc.withRequest
 import io.github.achmadhafid.simpleloc.simpleLocTracker
 import io.github.achmadhafid.simplepref.SimplePref
 import io.github.achmadhafid.simplepref.simplePref
-import io.github.achmadhafid.zpack.ktx.startForegroundServiceCompat
+import io.github.achmadhafid.zpack.extension.startForegroundServiceCompat
 
 @Suppress("MagicNumber")
 class LocationServiceLauncherActivity : SimpleLocResolverActivity(), SimplePref {

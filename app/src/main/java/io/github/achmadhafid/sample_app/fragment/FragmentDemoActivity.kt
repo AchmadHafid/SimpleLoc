@@ -9,8 +9,7 @@ import io.github.achmadhafid.sample_app.R
 import io.github.achmadhafid.sample_app.databinding.ActivityFragmentDemoBinding
 import io.github.achmadhafid.simplepref.SimplePref
 import io.github.achmadhafid.simplepref.simplePref
-import io.github.achmadhafid.zpack.ktx.setMaterialToolbar
-import io.github.achmadhafid.zpack.ktx.toggleTheme
+import io.github.achmadhafid.zpack.extension.toggleTheme
 
 class FragmentDemoActivity : AppCompatActivity(), SimplePref {
 
@@ -31,7 +30,7 @@ class FragmentDemoActivity : AppCompatActivity(), SimplePref {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        setMaterialToolbar(R.id.toolbar)
+        setSupportActionBar(binding.toolbar)
 
         with(supportFragmentManager) {
             fun checkStack() {
@@ -58,6 +57,7 @@ class FragmentDemoActivity : AppCompatActivity(), SimplePref {
         }
     }
 
+    @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         supportFragmentManager.findFragmentById(R.id.fragment_holder)

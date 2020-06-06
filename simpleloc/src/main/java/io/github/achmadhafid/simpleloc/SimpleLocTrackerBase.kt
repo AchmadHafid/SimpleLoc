@@ -2,11 +2,13 @@
 
 package io.github.achmadhafid.simpleloc
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.location.Address
 import android.location.Location
 import android.os.Looper
+import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
@@ -18,7 +20,6 @@ import com.google.android.gms.location.LocationAvailability
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.SettingsClient
-import io.github.achmadhafid.zpack.ktx.d
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -55,7 +56,7 @@ abstract class SimpleLocTrackerBase(
                             val addresses = location.getAddresses(getContext())
                             onLocationFound(location, addresses)
                         } catch (exception: IOException) {
-                            d("ERROR RESOLVING ADDRESSES")
+                            Log.d("SimpleLoc","ERROR RESOLVING ADDRESSES")
                             onLocationFound(location, emptyList())
                         }
                     }
@@ -101,6 +102,7 @@ abstract class SimpleLocTrackerBase(
         }
     }
 
+    @SuppressLint("MissingPermission")
     protected fun startTracker(isRestarted: Boolean) {
         if (isRunning) return
 

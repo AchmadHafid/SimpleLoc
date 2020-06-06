@@ -24,7 +24,7 @@ import io.github.achmadhafid.simpleloc.onUnresolvableError
 import io.github.achmadhafid.simpleloc.simpleLocTracker
 import io.github.achmadhafid.simpleloc.toggle
 import io.github.achmadhafid.simpleloc.withRequest
-import io.github.achmadhafid.zpack.ktx.toastShort
+import io.github.achmadhafid.zpack.extension.toastShort
 
 @Suppress("MagicNumber")
 class LocationTrackerFragment : Fragment(R.layout.fragment_location_tracker), SimpleLocClient {
@@ -99,6 +99,7 @@ class LocationTrackerFragment : Fragment(R.layout.fragment_location_tracker), Si
         _binding = null
     }
 
+    @Suppress("DEPRECATION")
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -112,6 +113,7 @@ class LocationTrackerFragment : Fragment(R.layout.fragment_location_tracker), Si
         )
     }
 
+    @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         onLocationServiceRepairResult(requestCode, resultCode, locationTracker)

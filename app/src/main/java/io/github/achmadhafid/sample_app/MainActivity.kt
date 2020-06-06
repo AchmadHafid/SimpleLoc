@@ -11,10 +11,9 @@ import io.github.achmadhafid.sample_app.service.ServiceDemoActivity
 import io.github.achmadhafid.simpleloc.SimpleLocClient
 import io.github.achmadhafid.simplepref.SimplePref
 import io.github.achmadhafid.simplepref.simplePref
-import io.github.achmadhafid.zpack.ktx.onSingleClick
-import io.github.achmadhafid.zpack.ktx.setMaterialToolbar
-import io.github.achmadhafid.zpack.ktx.startActivity
-import io.github.achmadhafid.zpack.ktx.toggleTheme
+import io.github.achmadhafid.zpack.extension.intent
+import io.github.achmadhafid.zpack.extension.toggleTheme
+import io.github.achmadhafid.zpack.extension.view.onSingleClick
 
 class MainActivity: AppCompatActivity(), SimpleLocClient, SimplePref {
 
@@ -35,17 +34,17 @@ class MainActivity: AppCompatActivity(), SimpleLocClient, SimplePref {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        setMaterialToolbar(R.id.toolbar)
+        setSupportActionBar(binding.toolbar)
 
         binding.apply {
             btnDemoActivity.onSingleClick {
-                startActivity<DemoActivity>()
+                startActivity(intent<DemoActivity>())
             }
             btnDemoFragment.onSingleClick {
-                startActivity<FragmentDemoActivity>()
+                startActivity(intent<FragmentDemoActivity>())
             }
             btnDemoService.onSingleClick {
-                startActivity<ServiceDemoActivity>()
+                startActivity(intent<ServiceDemoActivity>())
             }
         }
     }

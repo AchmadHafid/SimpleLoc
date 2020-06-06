@@ -7,7 +7,6 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.location.LocationRequest
-import com.google.android.material.button.MaterialButton
 import io.github.achmadhafid.sample_app.Dialog
 import io.github.achmadhafid.sample_app.R
 import io.github.achmadhafid.sample_app.databinding.ActivityDemoBinding
@@ -28,14 +27,12 @@ import io.github.achmadhafid.simpleloc.toggle
 import io.github.achmadhafid.simpleloc.withRequest
 import io.github.achmadhafid.simplepref.SimplePref
 import io.github.achmadhafid.simplepref.simplePref
-import io.github.achmadhafid.zpack.ktx.bindView
-import io.github.achmadhafid.zpack.ktx.hide
-import io.github.achmadhafid.zpack.ktx.onSingleClick
-import io.github.achmadhafid.zpack.ktx.setMaterialToolbar
-import io.github.achmadhafid.zpack.ktx.show
-import io.github.achmadhafid.zpack.ktx.showIf
-import io.github.achmadhafid.zpack.ktx.toastShort
-import io.github.achmadhafid.zpack.ktx.toggleTheme
+import io.github.achmadhafid.zpack.extension.toastShort
+import io.github.achmadhafid.zpack.extension.toggleTheme
+import io.github.achmadhafid.zpack.extension.view.invisible
+import io.github.achmadhafid.zpack.extension.view.onSingleClick
+import io.github.achmadhafid.zpack.extension.view.visible
+import io.github.achmadhafid.zpack.extension.view.visibleIf
 import kotlinx.android.synthetic.main.activity_demo.btnShowLocation
 
 @Suppress("MagicNumber")
@@ -73,7 +70,7 @@ class DemoActivity : AppCompatActivity(), SimpleLocClient, SimplePref {
         }
         onStopped { _, state ->
             isRunning = false
-            btnShowLocation.hide()
+            btnShowLocation.invisible()
 
             val message = when (state) {
                 SimpleLocTracker.StopState.PAUSED_BY_LIFECYCLE -> "Location tracking paused"
@@ -96,7 +93,7 @@ class DemoActivity : AppCompatActivity(), SimpleLocClient, SimplePref {
         }
         onLocationFound { _, location, _ ->
             currentLocation = location
-            btnShowLocation.show()
+            btnShowLocation.visible()
         }
         onPermissionRationaleCanceled {
             toastShort("Location Permissions canceled by user")
@@ -119,14 +116,14 @@ class DemoActivity : AppCompatActivity(), SimpleLocClient, SimplePref {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        setMaterialToolbar(R.id.toolbar)
+        setSupportActionBar(binding.toolbar)
         binding.btn.onSingleClick {
             locationTracker.toggle()
         }
         binding.btnShowLocation.onSingleClick {
             currentLocation?.openInGMaps(this)
         }
-        binding.btnShowLocation.showIf { currentLocation != null }
+        binding.btnShowLocation.visibleIf { currentLocation != null }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -166,6 +163,7 @@ class DemoActivity : AppCompatActivity(), SimpleLocClient, SimplePref {
         )
     }
 
+    @Suppress("DEPRECATION")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         onLocationServiceRepairResult(requestCode, resultCode, locationTracker)

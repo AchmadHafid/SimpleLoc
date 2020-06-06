@@ -3,10 +3,10 @@
 package io.github.achmadhafid.simpleloc
 
 import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleService
-import io.github.achmadhafid.lottie_dialog.LottieConfirmationDialog
+import io.github.achmadhafid.lottie_dialog.core.LottieConfirmationDialog
 
 interface SimpleLocClient
 internal interface SimpleLocClientError {
@@ -15,7 +15,7 @@ internal interface SimpleLocClientError {
 
 fun <T> T.simpleLocTracker(
     builder: SimpleLocConfig.() -> Unit
-) where T : FragmentActivity, T : SimpleLocClient =
+) where T : AppCompatActivity, T : SimpleLocClient =
     SimpleLocTrackerActivity(this, simpleLocConfig(builder))
 
 fun <T> T.simpleLocTracker(
@@ -36,7 +36,7 @@ fun <T> T.onLocationPermissionResult(
     locationTracker: SimpleLocTrackerActivity,
     rationaleDialogBuilder: LottieConfirmationDialog.() -> Unit,
     doNotAskAgainDialogBuilder: LottieConfirmationDialog.() -> Unit
-) where T : FragmentActivity, T : SimpleLocClient {
+) where T : AppCompatActivity, T : SimpleLocClient {
     if (locationTracker.config.requestCode != requestCode) return
 
     onLocationPermissionResult(
@@ -104,7 +104,7 @@ fun <T> T.onLocationServiceRepairResult(
     requestCode: Int,
     resultCode: Int,
     locationTracker: SimpleLocTrackerActivity
-) where T : FragmentActivity, T : SimpleLocClient {
+) where T : AppCompatActivity, T : SimpleLocClient {
     if (locationTracker.config.requestCode != requestCode) return
 
     if (resultCode == Activity.RESULT_OK) {

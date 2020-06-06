@@ -2,7 +2,7 @@
 
 package io.github.achmadhafid.simpleloc
 
-import androidx.fragment.app.FragmentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.OnLifecycleEvent
 import com.google.android.gms.common.api.ResolvableApiException
@@ -10,7 +10,7 @@ import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.SettingsClient
 
 class SimpleLocTrackerActivity(
-    private val activity: FragmentActivity,
+    private val activity: AppCompatActivity,
     config: SimpleLocConfig
 ) : SimpleLocTrackerBase(config) {
 

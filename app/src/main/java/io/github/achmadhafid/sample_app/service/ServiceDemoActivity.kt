@@ -11,12 +11,11 @@ import io.github.achmadhafid.simpleloc.SimpleLocClient
 import io.github.achmadhafid.simplepref.SimplePref
 import io.github.achmadhafid.simplepref.livedata.simplePrefLiveData
 import io.github.achmadhafid.simplepref.simplePref
-import io.github.achmadhafid.zpack.ktx.onSingleClick
-import io.github.achmadhafid.zpack.ktx.setMaterialToolbar
-import io.github.achmadhafid.zpack.ktx.startActivity
-import io.github.achmadhafid.zpack.ktx.stopService
-import io.github.achmadhafid.zpack.ktx.toastShort
-import io.github.achmadhafid.zpack.ktx.toggleTheme
+import io.github.achmadhafid.zpack.extension.intent
+import io.github.achmadhafid.zpack.extension.stopService
+import io.github.achmadhafid.zpack.extension.toastShort
+import io.github.achmadhafid.zpack.extension.toggleTheme
+import io.github.achmadhafid.zpack.extension.view.onSingleClick
 
 class ServiceDemoActivity : AppCompatActivity(), SimpleLocClient, SimplePref {
 
@@ -39,13 +38,13 @@ class ServiceDemoActivity : AppCompatActivity(), SimpleLocClient, SimplePref {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        setMaterialToolbar(R.id.toolbar)
+        setSupportActionBar(binding.toolbar)
 
         binding.btn.onSingleClick {
             if (serviceStatus == DemoLocationService.STATUS_RUNNING)
                 stopService<DemoLocationService>()
             else
-                startActivity<LocationServiceLauncherActivity>()
+                startActivity(intent<LocationServiceLauncherActivity>())
         }
 
         simplePrefLiveData(serviceStatus, ::serviceStatus).observe(this) {

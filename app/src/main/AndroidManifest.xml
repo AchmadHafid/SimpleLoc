@@ -25,8 +25,9 @@
         <activity android:name=".activity.DemoActivity" />
         <activity android:name=".fragment.FragmentDemoActivity" />
         <activity android:name=".service.ServiceDemoActivity" />
-        <activity android:name=".service.LocationServiceLauncherActivity"
-            android:theme="@style/AppTheme.Transparent"/>
+        <activity
+            android:name=".service.LocationServiceLauncherActivity"
+            android:theme="@style/AppTheme" />
 
         <service
             android:name=".service.DemoLocationService"

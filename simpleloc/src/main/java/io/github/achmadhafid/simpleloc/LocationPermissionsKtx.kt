@@ -3,21 +3,20 @@
 package io.github.achmadhafid.simpleloc
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
-import io.github.achmadhafid.lottie_dialog.LottieConfirmationDialog
-import io.github.achmadhafid.lottie_dialog.lottieConfirmationDialog
+import io.github.achmadhafid.lottie_dialog.core.LottieConfirmationDialog
+import io.github.achmadhafid.lottie_dialog.core.lottieConfirmationDialog
+import io.github.achmadhafid.lottie_dialog.core.onCancel
+import io.github.achmadhafid.lottie_dialog.core.withNegativeButton
+import io.github.achmadhafid.lottie_dialog.core.withPositiveButton
 import io.github.achmadhafid.lottie_dialog.model.onClick
-import io.github.achmadhafid.lottie_dialog.onCancel
-import io.github.achmadhafid.lottie_dialog.withNegativeButton
-import io.github.achmadhafid.lottie_dialog.withPositiveButton
-import io.github.achmadhafid.zpack.ktx.arePermissionsGranted
-import io.github.achmadhafid.zpack.ktx.belowMarshmallow
-import io.github.achmadhafid.zpack.ktx.openAppDetailSettings
-import io.github.achmadhafid.zpack.ktx.requestPermissionCompat
-import io.github.achmadhafid.zpack.ktx.shouldShowRequestPermissionRationales
+import io.github.achmadhafid.zpack.extension.arePermissionsGranted
+import io.github.achmadhafid.zpack.extension.belowMarshmallow
+import io.github.achmadhafid.zpack.extension.openAppDetailSettings
+import io.github.achmadhafid.zpack.extension.requestPermissionCompat
+import io.github.achmadhafid.zpack.extension.shouldShowRequestPermissionRationales
 
 private val LocationPermissions = arrayOf(
     Manifest.permission.ACCESS_FINE_LOCATION,
@@ -35,13 +34,14 @@ val Fragment.hasLocationPermissions
 //endregion
 //region Permission Request
 
-fun Activity.requestLocationPermission(requestCode: Int = SIMPLE_LOC_REQUEST_CODE) =
+fun AppCompatActivity.requestLocationPermission(requestCode: Int = SIMPLE_LOC_REQUEST_CODE) =
     requestPermissionCompat(LocationPermissions, requestCode)
 
+@Suppress("DEPRECATION")
 fun Fragment.requestLocationPermission(requestCode: Int = SIMPLE_LOC_REQUEST_CODE) =
     requestPermissions(LocationPermissions, requestCode)
 
-fun <T> Activity.withLocationPermission(
+fun <T> AppCompatActivity.withLocationPermission(
     requestCode: Int = SIMPLE_LOC_REQUEST_CODE,
     defaultReturnValue: T? = null,
     onGranted: () -> T?
@@ -50,7 +50,7 @@ fun <T> Activity.withLocationPermission(
     else -> defaultReturnValue.also { requestLocationPermission(requestCode) }
 }
 
-fun Activity.withLocationPermission(
+fun AppCompatActivity.withLocationPermission(
     requestCode: Int = SIMPLE_LOC_REQUEST_CODE,
     onGranted: () -> Unit
 ) {
@@ -89,7 +89,7 @@ enum class PermissionResultUserResponse {
 }
 
 @Suppress("LongParameterList")
-fun FragmentActivity.onLocationPermissionResult(
+fun AppCompatActivity.onLocationPermissionResult(
     requestCode: Int,
     permissions: Array<out String>,
     grantResults: IntArray,
@@ -98,9 +98,9 @@ fun FragmentActivity.onLocationPermissionResult(
     callback: (PermissionResultUserResponse) -> Unit
 ) {
     when {
-        arePermissionsGranted(grantResults) -> callback(PermissionResultUserResponse.NO_RESPONSE)
+        grantResults.arePermissionsGranted -> callback(PermissionResultUserResponse.NO_RESPONSE)
         shouldShowRequestPermissionRationales(permissions) -> {
-            lottieConfirmationDialog(rationaleDialogBuilder) {
+            lottieConfirmationDialog(0, rationaleDialogBuilder) {
                 withPositiveButton {
                     onClick {
                         callback(PermissionResultUserResponse.RATIONALE_DIALOG_POSITIVE)
@@ -117,7 +117,7 @@ fun FragmentActivity.onLocationPermissionResult(
                 }
             }
         }
-        else -> lottieConfirmationDialog(doNotAskAgainDialogBuilder) {
+        else -> lottieConfirmationDialog(0, doNotAskAgainDialogBuilder) {
             withPositiveButton {
                 actionDelay = OPEN_APP_SETTING_DELAY
                 onClick {
@@ -147,9 +147,9 @@ fun Fragment.onLocationPermissionResult(
     callback: (PermissionResultUserResponse) -> Unit
 ) {
     when {
-        arePermissionsGranted(grantResults) -> callback(PermissionResultUserResponse.NO_RESPONSE)
+        grantResults.arePermissionsGranted -> callback(PermissionResultUserResponse.NO_RESPONSE)
         shouldShowRequestPermissionRationales(permissions) -> {
-            lottieConfirmationDialog(rationaleDialogBuilder) {
+            lottieConfirmationDialog(0, rationaleDialogBuilder) {
                 withPositiveButton {
                     onClick {
                         callback(PermissionResultUserResponse.RATIONALE_DIALOG_POSITIVE)
@@ -166,7 +166,7 @@ fun Fragment.onLocationPermissionResult(
                 }
             }
         }
-        else -> lottieConfirmationDialog(doNotAskAgainDialogBuilder) {
+        else -> lottieConfirmationDialog(0, doNotAskAgainDialogBuilder) {
             withPositiveButton {
                 actionDelay = OPEN_APP_SETTING_DELAY
                 onClick {

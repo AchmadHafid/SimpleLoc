@@ -2,8 +2,8 @@
 
 package io.github.achmadhafid.simpleloc
 
-import android.app.Activity
 import android.app.Service
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -18,13 +18,13 @@ internal fun Service.getSettingsClient() =
 internal fun Service.checkLocationSettings(request: LocationSettingsRequest) =
     getSettingsClient().checkLocationSettings(request)
 
-internal fun Activity.getLocationClient(): FusedLocationProviderClient =
+internal fun AppCompatActivity.getLocationClient(): FusedLocationProviderClient =
     LocationServices.getFusedLocationProviderClient(this)
 
-internal fun Activity.getSettingsClient() =
+internal fun AppCompatActivity.getSettingsClient() =
     LocationServices.getSettingsClient(this)
 
-internal fun Activity.checkLocationSettings(request: LocationSettingsRequest) =
+internal fun AppCompatActivity.checkLocationSettings(request: LocationSettingsRequest) =
     getSettingsClient().checkLocationSettings(request)
 
 internal fun Fragment.getLocationClient(): FusedLocationProviderClient =

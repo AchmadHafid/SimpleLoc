@@ -1,12 +1,12 @@
 package io.github.achmadhafid.sample_app
 
-import io.github.achmadhafid.lottie_dialog.lottieConfirmationDialogBuilder
+import io.github.achmadhafid.lottie_dialog.core.lottieConfirmationDialogBuilder
+import io.github.achmadhafid.lottie_dialog.core.withAnimation
+import io.github.achmadhafid.lottie_dialog.core.withContent
+import io.github.achmadhafid.lottie_dialog.core.withNegativeButton
+import io.github.achmadhafid.lottie_dialog.core.withPositiveButton
+import io.github.achmadhafid.lottie_dialog.core.withTitle
 import io.github.achmadhafid.lottie_dialog.model.LottieDialogType
-import io.github.achmadhafid.lottie_dialog.withAnimation
-import io.github.achmadhafid.lottie_dialog.withContent
-import io.github.achmadhafid.lottie_dialog.withNegativeButton
-import io.github.achmadhafid.lottie_dialog.withPositiveButton
-import io.github.achmadhafid.lottie_dialog.withTitle
 
 object Dialog {
 
