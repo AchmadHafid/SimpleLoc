@@ -52,7 +52,7 @@ Add the dependency
 ```groovy
 dependencies {
   ...
-  implementation "com.github.AchmadHafid:SimpleLoc:1.1.0"
+  implementation "com.github.AchmadHafid:SimpleLoc:1.2.0"
   ...
 }
 ```

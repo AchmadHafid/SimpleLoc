@@ -16,8 +16,8 @@ import io.github.achmadhafid.simpleloc.onLocationFound
 import io.github.achmadhafid.simpleloc.onRunning
 import io.github.achmadhafid.simpleloc.onStopped
 import io.github.achmadhafid.simpleloc.onUnresolvableError
-import io.github.achmadhafid.simpleloc.withRequest
 import io.github.achmadhafid.simpleloc.simpleLocTracker
+import io.github.achmadhafid.simpleloc.withRequest
 import io.github.achmadhafid.simplepref.SimplePref
 import io.github.achmadhafid.simplepref.simplePref
 import io.github.achmadhafid.zpack.extension.atLeastOreo

@@ -14,7 +14,7 @@ buildscript {
 plugins {
     id "com.github.dcendents.android-maven" version "2.1"
     id "com.github.ben-manes.versions" version "0.28.0"
-    id "io.gitlab.arturbosch.detekt" version "1.9.1"
+    id "io.gitlab.arturbosch.detekt" version "1.10.0-RC1"
 }
 
 allprojects {
@@ -38,7 +38,7 @@ subprojects {
 detekt {
     failFast = false
     input  = files("$projectDir")
-    config = files("$projectDir/detekt-config.yml")
+    config = files("$projectDir/detekt.yml")
     reports {
         xml.enabled = true
         txt.enabled = true
