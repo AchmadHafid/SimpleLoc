@@ -10,7 +10,7 @@
     <string name="label_open_location">Location Found, Open in Google Maps</string>
     <string name="label_show_fragment">Show Fragment</string>
     <string name="label_remove_fragment">Remove Fragment</string>
-    <string name="label_location_found">Location found, accuracy: %1$f, total address: %2$d</string>
+    <string name="label_location_found">Location found, accuracy: %1$.2f, total address: %2$d</string>
     <string name="label_detecting_location">Detecting Location…</string>
     <string name="label_stop_location_service">Stop Location Service</string>
     <string name="label_start_location_service">Start Location Service</string>
