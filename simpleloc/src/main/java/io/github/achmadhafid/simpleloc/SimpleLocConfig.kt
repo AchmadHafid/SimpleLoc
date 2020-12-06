@@ -8,6 +8,7 @@ import com.google.android.gms.location.LocationSettingsRequest
 data class SimpleLocConfig(
     var requestCode: Int = SIMPLE_LOC_REQUEST_CODE,
     var isAutoStart: Boolean = false,
+    var backgroundLocationAccess: Boolean = false,
     var resolveAddress: Boolean = false,
     var locationRequest: LocationRequest = LocationRequest.create(),
     var onRunningListener: (SimpleLocTracker, isRestarted: Boolean) -> Unit = {_, _ ->},

@@ -19,68 +19,78 @@ import io.github.achmadhafid.zpack.extension.openAppDetailSettings
 import io.github.achmadhafid.zpack.extension.requestPermissionCompat
 import io.github.achmadhafid.zpack.extension.shouldShowRequestPermissionRationales
 
-private val LocationPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-    arrayOf(
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.ACCESS_BACKGROUND_LOCATION
-    )
-} else {
-    arrayOf(
-        Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION
-    )
-}
-
-//region Permission Checker
-
-val Context.hasLocationPermissions
-    get() = arePermissionsGranted(LocationPermissions)
-
-val Fragment.hasLocationPermissions
-    get() = requireContext().arePermissionsGranted(LocationPermissions)
-
-//endregion
 //region Permission Request
 
-fun AppCompatActivity.requestLocationPermission(requestCode: Int = SIMPLE_LOC_REQUEST_CODE) =
-    requestPermissionCompat(LocationPermissions, requestCode)
-
-@Suppress("DEPRECATION")
-fun Fragment.requestLocationPermission(requestCode: Int = SIMPLE_LOC_REQUEST_CODE) =
-    requestPermissions(LocationPermissions, requestCode)
+fun AppCompatActivity.requestLocationPermission(
+    requestCode: Int = SIMPLE_LOC_REQUEST_CODE,
+    backgroundAccess: Boolean = false
+) = requestPermissionCompat(getLocationPermissions(backgroundAccess), requestCode)
 
 fun <T> AppCompatActivity.withLocationPermission(
     requestCode: Int = SIMPLE_LOC_REQUEST_CODE,
+    backgroundAccess: Boolean = false,
     defaultReturnValue: T? = null,
     onGranted: () -> T?
 ) = when {
-    belowMarshmallow() || hasLocationPermissions -> onGranted()
-    else -> defaultReturnValue.also { requestLocationPermission(requestCode) }
+    belowMarshmallow() || hasLocationPermissions(backgroundAccess) -> onGranted()
+    else -> defaultReturnValue.also { requestLocationPermission(requestCode, backgroundAccess) }
 }
 
 fun AppCompatActivity.withLocationPermission(
     requestCode: Int = SIMPLE_LOC_REQUEST_CODE,
+    backgroundAccess: Boolean = false,
     onGranted: () -> Unit
 ) {
-    withLocationPermission(requestCode, Unit, onGranted)
+    withLocationPermission(requestCode, backgroundAccess, Unit, onGranted)
 }
+
+@Suppress("DEPRECATION")
+fun Fragment.requestLocationPermission(
+    requestCode: Int = SIMPLE_LOC_REQUEST_CODE,
+    backgroundAccess: Boolean = false
+) = requestPermissions(getLocationPermissions(backgroundAccess), requestCode)
 
 fun <T> Fragment.withLocationPermission(
     requestCode: Int = SIMPLE_LOC_REQUEST_CODE,
+    backgroundAccess: Boolean = false,
     defaultReturnValue: T? = null,
     onGranted: () -> T?
 ) = when {
-    belowMarshmallow() || hasLocationPermissions -> onGranted()
-    else -> defaultReturnValue.also { requestLocationPermission(requestCode) }
+    belowMarshmallow() || hasLocationPermissions(backgroundAccess) -> onGranted()
+    else -> defaultReturnValue.also { requestLocationPermission(requestCode, backgroundAccess) }
 }
 
 fun Fragment.withLocationPermission(
     requestCode: Int = SIMPLE_LOC_REQUEST_CODE,
+    backgroundAccess: Boolean = false,
     onGranted: () -> Unit
 ) {
-    withLocationPermission(requestCode, Unit, onGranted)
+    withLocationPermission(requestCode, backgroundAccess, Unit, onGranted)
 }
+
+private fun getLocationPermissions(backgroundAccess: Boolean): Array<String> {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q && backgroundAccess) {
+        arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION,
+            Manifest.permission.ACCESS_BACKGROUND_LOCATION
+        )
+    } else {
+        arrayOf(
+            Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+    }
+}
+
+//endregion
+//region Permission Checker
+
+internal fun Context.hasLocationPermissions(backgroundAccess: Boolean) =
+    arePermissionsGranted(getLocationPermissions(backgroundAccess))
+
+internal fun Fragment.hasLocationPermissions(backgroundAccess: Boolean) =
+    requireContext().arePermissionsGranted(getLocationPermissions(backgroundAccess))
 
 //endregion
 //region Permission Result

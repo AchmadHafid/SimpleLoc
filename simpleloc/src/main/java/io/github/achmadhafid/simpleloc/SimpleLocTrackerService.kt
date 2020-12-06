@@ -37,7 +37,7 @@ class SimpleLocTrackerService(
         if (isForce) disable(isForce)
 
         if (!isEnabled) {
-            if (service.hasLocationPermissions) {
+            if (service.hasLocationPermissions(config.backgroundLocationAccess)) {
                 startTracker(false)
             } else {
                 onError(IllegalStateException())

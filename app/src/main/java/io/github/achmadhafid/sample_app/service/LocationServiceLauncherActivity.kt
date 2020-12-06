@@ -40,6 +40,7 @@ class LocationServiceLauncherActivity : SimpleLocResolverActivity(), SimplePref 
         }
 
         isAutoStart = true
+        backgroundLocationAccess = true
         withRequest {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             interval = TRACKING_INTERVAL

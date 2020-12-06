@@ -39,7 +39,7 @@ class SimpleLocTrackerActivity(
         if (isForce) disable(isForce)
 
         if (!isEnabled) {
-            activity.withLocationPermission(config.requestCode) {
+            activity.withLocationPermission(config.requestCode, config.backgroundLocationAccess) {
                 startTracker(false)
             }
         }
@@ -48,7 +48,7 @@ class SimpleLocTrackerActivity(
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     internal fun onStart() {
         if (isEnabled) {
-            activity.withLocationPermission(config.requestCode) {
+            activity.withLocationPermission(config.requestCode, config.backgroundLocationAccess) {
                 startTracker(true)
             }
         }

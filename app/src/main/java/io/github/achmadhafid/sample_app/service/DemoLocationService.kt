@@ -40,6 +40,7 @@ class DemoLocationService : LifecycleService(), SimpleLocClient, SimplePref {
 
     private val locationTracker = simpleLocTracker {
         resolveAddress = true
+        backgroundLocationAccess = true
         withRequest {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
             interval = TRACKING_INTERVAL
