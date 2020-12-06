@@ -17,6 +17,7 @@ import io.github.achmadhafid.sample_app.TRACKING_INTERVAL
 import io.github.achmadhafid.simpleloc.SimpleLocClient
 import io.github.achmadhafid.simpleloc.SimpleLocTracker
 import io.github.achmadhafid.simpleloc.onLocationFound
+import io.github.achmadhafid.simpleloc.onLocationSettingsUnavailable
 import io.github.achmadhafid.simpleloc.onRunning
 import io.github.achmadhafid.simpleloc.onStopped
 import io.github.achmadhafid.simpleloc.onUnresolvableError
@@ -72,6 +73,12 @@ class DemoLocationService : LifecycleService(), SimpleLocClient, SimplePref {
 
             d(message)
             toastShort(message)
+        }
+        onLocationSettingsUnavailable { _, isAirPlaneModeOn ->
+            toastShort(
+                if (isAirPlaneModeOn) R.string.message_location_air_plane_mode_on
+                else R.string.message_location_settings_unavailable
+            )
         }
         onUnresolvableError { _, exception ->
             serviceStatus = STATUS_STOPPED

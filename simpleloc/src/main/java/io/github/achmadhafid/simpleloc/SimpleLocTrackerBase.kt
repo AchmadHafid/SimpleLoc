@@ -8,17 +8,20 @@ import android.content.Context
 import android.location.Address
 import android.location.Location
 import android.os.Looper
+import android.provider.Settings
 import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.common.api.ApiException
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationAvailability
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationSettingsStatusCodes
 import com.google.android.gms.location.SettingsClient
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
@@ -56,7 +59,7 @@ abstract class SimpleLocTrackerBase(
                             val addresses = location.getAddresses(getContext())
                             onLocationFound(location, addresses)
                         } catch (exception: IOException) {
-                            Log.d("SimpleLoc","ERROR RESOLVING ADDRESSES")
+                            Log.d("SimpleLoc", "ERROR RESOLVING ADDRESSES")
                             onLocationFound(location, emptyList())
                         }
                     }
@@ -133,15 +136,25 @@ abstract class SimpleLocTrackerBase(
     //region Start Error Handler
 
     override fun onError(exception: Exception) {
+        isEnabled = false
+        isRunning = false
         when (exception) {
             is LocationServiceRepairError -> {
-                isEnabled = false
-                isRunning = false
                 config.onLocationServiceRepairErrorListener(this)
             }
+            is ApiException -> {
+                if (exception.statusCode == LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE) {
+                    val isAirPlaneModeOn = Settings.Global.getInt(
+                        getContext().contentResolver,
+                        Settings.Global.AIRPLANE_MODE_ON,
+                        0
+                    ) != 0
+                    config.onLocationSettingsUnavailableListener(this, isAirPlaneModeOn)
+                } else {
+                    config.onUnresolvableErrorListener(this, exception)
+                }
+            }
             else -> {
-                isEnabled = false
-                isRunning = false
                 config.onUnresolvableErrorListener(this, exception)
             }
         }
@@ -177,7 +190,7 @@ abstract class SimpleLocTrackerBase(
     protected var lifecycleOwner: LifecycleOwner? = null
         set(value) {
             value?.let {
-                it.lifecycle.addObserver(object : LifecycleObserver{
+                it.lifecycle.addObserver(object : LifecycleObserver {
                     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
                     fun onDestroy() {
                         it.lifecycle.removeObserver(this)

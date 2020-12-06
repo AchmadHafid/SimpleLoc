@@ -18,6 +18,7 @@ import io.github.achmadhafid.simpleloc.onLocationFound
 import io.github.achmadhafid.simpleloc.onLocationPermissionResult
 import io.github.achmadhafid.simpleloc.onLocationServiceRepairError
 import io.github.achmadhafid.simpleloc.onLocationServiceRepairResult
+import io.github.achmadhafid.simpleloc.onLocationSettingsUnavailable
 import io.github.achmadhafid.simpleloc.onOpenPermissionSettingCanceled
 import io.github.achmadhafid.simpleloc.onPermissionRationaleCanceled
 import io.github.achmadhafid.simpleloc.onRunning
@@ -76,6 +77,12 @@ class LocationTrackerFragment : Fragment(), SimpleLocClient {
         }
         onLocationServiceRepairError {
             toastShort(R.string.message_location_service_is_not_available)
+        }
+        onLocationSettingsUnavailable { _, isAirPlaneModeOn ->
+            toastShort(
+                if (isAirPlaneModeOn) R.string.message_location_air_plane_mode_on
+                else R.string.message_location_settings_unavailable
+            )
         }
         onUnresolvableError { _, exception ->
             toastShort(getString(R.string.message_location_setting_error, exception.message))

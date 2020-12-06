@@ -20,6 +20,8 @@
     <string name="message_permission_canceled">Location Permissions canceled by user</string>
     <string name="message_permission_setting_canceled">User do not want to open permission setting</string>
     <string name="message_location_service_is_not_available">Location service is not available</string>
+    <string name="message_location_settings_unavailable">Location settings is not available</string>
+    <string name="message_location_air_plane_mode_on">Please turn off Air Plane Mode and enable location</string>
     <string name="message_location_setting_error">Location Setting ERROR: %1$s</string>
     <string name="message_tracking_paused">Location tracking paused</string>
     <string name="message_tracking_destroyed_by_lifecycle">Location tracking destroyed by lifecycle</string>

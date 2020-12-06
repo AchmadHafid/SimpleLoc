@@ -17,6 +17,7 @@ data class SimpleLocConfig(
     var onPermissionRationaleCanceledListener: (SimpleLocTracker) -> Unit = {},
     var onOpenPermissionSettingCanceledListener: (SimpleLocTracker) -> Unit = {},
     var onLocationServiceRepairErrorListener: (SimpleLocTracker) -> Unit = {},
+    var onLocationSettingsUnavailableListener: (SimpleLocTracker, Boolean) -> Unit = {_, _ ->},
     var onUnresolvableErrorListener: (SimpleLocTracker, Exception) -> Unit = {_, _ ->}
 )
 
@@ -49,6 +50,10 @@ fun SimpleLocConfig.onOpenPermissionSettingCanceled(callback: (SimpleLocTracker)
 
 fun SimpleLocConfig.onLocationServiceRepairError(callback: (SimpleLocTracker) -> Unit) {
     onLocationServiceRepairErrorListener = callback
+}
+
+fun SimpleLocConfig.onLocationSettingsUnavailable(callback: (SimpleLocTracker, Boolean) -> Unit) {
+    onLocationSettingsUnavailableListener = callback
 }
 
 fun SimpleLocConfig.onUnresolvableError(callback: (SimpleLocTracker, Exception) -> Unit) {

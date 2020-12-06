@@ -8,7 +8,6 @@ internal const val CHECK_LOCATION_SETTING_RESULT_DELAY = 250L
 
 internal object LocationServiceRepairError : Exception()
 
-// TODO 06/12/2020 support offline location tracking
 // TODO 06/12/2020 update documentation
 // TODO 06/12/2020 update sample app
 
