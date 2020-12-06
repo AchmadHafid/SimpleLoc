@@ -14,6 +14,7 @@ import java.util.Locale
 
 suspend fun Location.getAddresses(context: Context): List<Address> =
     withContext(Dispatchers.IO) {
+        @Suppress("BlockingMethodInNonBlockingContext")
         Geocoder(context, Locale.getDefault())
             .getFromLocation(latitude, longitude, MAX_ADDRESS)
     }

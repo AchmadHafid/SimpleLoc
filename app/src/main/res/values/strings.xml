@@ -2,4 +2,42 @@
 
     <string name="app_name">SimpleLoc</string>
 
+    <string name="label_activity_demo">Activity Demo</string>
+    <string name="label_fragment_demo">Fragment Demo</string>
+    <string name="label_service_demo">Service Demo</string>
+    <string name="label_stop_tracking">Stop Tracking</string>
+    <string name="label_start_tracking">Start Tracking</string>
+    <string name="label_open_location">Location Found, Open in Google Maps</string>
+    <string name="label_show_fragment">Show Fragment</string>
+    <string name="label_remove_fragment">Remove Fragment</string>
+    <string name="label_location_found">Location found, accuracy: %1$f, total address: %2$d</string>
+    <string name="label_detecting_location">Detecting Location…</string>
+    <string name="label_stop_location_service">Stop Location Service</string>
+    <string name="label_start_location_service">Start Location Service</string>
+    <string name="label_resolving_error">Resolving Location Error…</string>
+
+    <string name="message_permission_required">Permissions required</string>
+    <string name="message_permission_canceled">Location Permissions canceled by user</string>
+    <string name="message_permission_setting_canceled">User do not want to open permission setting</string>
+    <string name="message_location_service_is_not_available">Location service is not available</string>
+    <string name="message_location_setting_error">Location Setting ERROR: %1$s</string>
+    <string name="message_tracking_paused">Location tracking paused</string>
+    <string name="message_tracking_destroyed_by_lifecycle">Location tracking destroyed by lifecycle</string>
+    <string name="message_tracking_become_unavailable">Location tracking become unavailable</string>
+    <string name="message_tracking_stopped_by_user">Location tracking stopped by user</string>
+    <string name="message_tracking_started">Location tracking is started</string>
+    <string name="message_tracking_restarted">Location tracking is restarted</string>
+    <string name="message_location_service_unavailable">Location Service unavailable</string>
+    <string name="message_error_unknown">Unknown Error</string>
+
+    <string name="dialog_location_required_title">Location Required</string>
+    <string name="dialog_location_required_content">Please enable location permission</string>
+    <string name="dialog_location_required_in_device_settings_title">Location Required</string>
+    <string name="dialog_location_required_in_device_settings_content">Please enable location permission on the next screen</string>
+
+    <string name="notification_title">Location Service Demo</string>
+    <string name="notification_content">Running location tracker</string>
+    <string name="notification_channel_name">SimpleLoc Location Tracking</string>
+    <string name="notification_channel_desc">SimpleLoc Foreground location service demo</string>
+
 </resources>

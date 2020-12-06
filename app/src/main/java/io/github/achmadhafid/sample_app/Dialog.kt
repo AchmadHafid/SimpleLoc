@@ -13,11 +13,11 @@ object Dialog {
     val rationale = lottieConfirmationDialogBuilder {
         type = LottieDialogType.BOTTOM_SHEET
         withAnimation {
-            fileRes    = R.raw.rationale
+            fileRes = R.raw.rationale
             paddingRes = R.dimen.lottie_dialog_animation_padding
         }
-        withTitle("Location Required")
-        withContent("Please enable location permission")
+        withTitle(R.string.dialog_location_required_title)
+        withContent(R.string.dialog_location_required_content)
         withPositiveButton {
             textRes = android.R.string.ok
             iconRes = R.drawable.ic_check_black_18dp_svg
@@ -31,8 +31,8 @@ object Dialog {
     val doNotAskAgain = lottieConfirmationDialogBuilder {
         type = LottieDialogType.BOTTOM_SHEET
         withAnimation(R.raw.do_not_ask_again)
-        withTitle("Location Required")
-        withContent("Please enable location permission on the next screen")
+        withTitle(R.string.dialog_location_required_title)
+        withContent(R.string.dialog_location_required_in_device_settings_content)
         withPositiveButton {
             textRes = android.R.string.ok
             iconRes = R.drawable.ic_check_black_18dp_svg

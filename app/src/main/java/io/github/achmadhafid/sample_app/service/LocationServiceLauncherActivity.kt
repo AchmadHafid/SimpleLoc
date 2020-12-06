@@ -2,6 +2,9 @@ package io.github.achmadhafid.sample_app.service
 
 import com.google.android.gms.location.LocationRequest
 import io.github.achmadhafid.sample_app.Dialog
+import io.github.achmadhafid.sample_app.PREFERENCE_KEY_SERVICE_STATUS
+import io.github.achmadhafid.sample_app.TRACKING_FASTEST_INTERVAL
+import io.github.achmadhafid.sample_app.TRACKING_INTERVAL
 import io.github.achmadhafid.simpleloc.SimpleLocResolverActivity
 import io.github.achmadhafid.simpleloc.SimpleLocTracker
 import io.github.achmadhafid.simpleloc.onLocationServiceRepairError
@@ -15,17 +18,16 @@ import io.github.achmadhafid.simplepref.SimplePref
 import io.github.achmadhafid.simplepref.simplePref
 import io.github.achmadhafid.zpack.extension.startForegroundServiceCompat
 
-@Suppress("MagicNumber")
 class LocationServiceLauncherActivity : SimpleLocResolverActivity(), SimplePref {
 
     //region Preference
 
-    private var serviceStatus: Int? by simplePref("service_status")
+    private var serviceStatus: Int? by simplePref(PREFERENCE_KEY_SERVICE_STATUS)
 
     //endregion
     //region Dialog
 
-    override val rationaleDialog     = Dialog.rationale
+    override val rationaleDialog = Dialog.rationale
     override val doNotAckAgainDialog = Dialog.doNotAskAgain
 
     //endregion
@@ -39,9 +41,9 @@ class LocationServiceLauncherActivity : SimpleLocResolverActivity(), SimplePref 
 
         isAutoStart = true
         withRequest {
-            priority        = LocationRequest.PRIORITY_HIGH_ACCURACY
-            interval        = 5 * 1000L
-            fastestInterval = 3 * 1000L
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            interval = TRACKING_INTERVAL
+            fastestInterval = TRACKING_FASTEST_INTERVAL
         }
         onRunning { tracker, _ ->
             tracker.disable()
@@ -54,7 +56,7 @@ class LocationServiceLauncherActivity : SimpleLocResolverActivity(), SimplePref 
         }
         onOpenPermissionSettingCanceled(::onCanceled)
         onLocationServiceRepairError(::onCanceled)
-        onUnresolvableError {_, _ ->
+        onUnresolvableError { _, _ ->
             serviceStatus = DemoLocationService.STATUS_UNKNOWN_ERROR
             finish()
         }

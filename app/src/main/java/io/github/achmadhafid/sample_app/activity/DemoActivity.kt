@@ -8,7 +8,10 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.gms.location.LocationRequest
 import io.github.achmadhafid.sample_app.Dialog
+import io.github.achmadhafid.sample_app.PREFERENCE_KEY_THEME
 import io.github.achmadhafid.sample_app.R
+import io.github.achmadhafid.sample_app.TRACKING_FASTEST_INTERVAL
+import io.github.achmadhafid.sample_app.TRACKING_INTERVAL
 import io.github.achmadhafid.sample_app.databinding.ActivityDemoBinding
 import io.github.achmadhafid.simpleloc.SimpleLocClient
 import io.github.achmadhafid.simpleloc.SimpleLocTracker
@@ -30,17 +33,16 @@ import io.github.achmadhafid.simplepref.simplePref
 import io.github.achmadhafid.zpack.extension.toastShort
 import io.github.achmadhafid.zpack.extension.toggleTheme
 import io.github.achmadhafid.zpack.extension.view.invisible
-import io.github.achmadhafid.zpack.extension.view.onSingleClick
+import io.github.achmadhafid.zpack.extension.view.setTextRes
 import io.github.achmadhafid.zpack.extension.view.visible
 import io.github.achmadhafid.zpack.extension.view.visibleIf
 import kotlinx.android.synthetic.main.activity_demo.btnShowLocation
 
-@Suppress("MagicNumber")
 class DemoActivity : AppCompatActivity(), SimpleLocClient, SimplePref {
 
     //region Preference
 
-    private var appTheme: Int? by simplePref("app_theme")
+    private var appTheme: Int? by simplePref(PREFERENCE_KEY_THEME)
     private var isRestarting by simplePref { false }
     private var isRunning by simplePref { false }
 
@@ -59,68 +61,73 @@ class DemoActivity : AppCompatActivity(), SimpleLocClient, SimplePref {
     private val locationTracker = simpleLocTracker {
         resolveAddress = true
         withRequest {
-            priority        = LocationRequest.PRIORITY_HIGH_ACCURACY
-            interval        = 5 * 1000L
-            fastestInterval = 3 * 1000L
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            interval = TRACKING_INTERVAL
+            fastestInterval = TRACKING_FASTEST_INTERVAL
         }
         onRunning { _, isRestarted ->
             isRunning = true
-            binding.btn.text = "Stop Tracking"
-            toastShort("Location tracking " + if (isRestarted) "re-started" else "started")
+            binding.btn.setTextRes(R.string.label_stop_tracking)
+            toastShort(
+                if (isRestarted) R.string.message_tracking_restarted
+                else R.string.message_tracking_started
+            )
         }
         onStopped { _, state ->
             isRunning = false
             btnShowLocation.invisible()
 
-            val message = when (state) {
-                SimpleLocTracker.StopState.PAUSED_BY_LIFECYCLE -> "Location tracking paused"
+            when (state) {
+                SimpleLocTracker.StopState.PAUSED_BY_LIFECYCLE -> {
+                    toastShort(R.string.message_tracking_paused)
+                }
                 SimpleLocTracker.StopState.DESTROYED_BY_LIFECYCLE -> {
                     if (isRestarting) {
                         isRunning = true
                         return@onStopped
                     } else {
-                        "Location tracking destroyed by lifecycle"
+                        toastShort(R.string.message_tracking_destroyed_by_lifecycle)
                     }
                 }
-                SimpleLocTracker.StopState.STOPPED_BY_SYSTEM -> "Location tracking become unavailable".also {
-                    binding.btn.text = "Start Tracking"
+                SimpleLocTracker.StopState.STOPPED_BY_SYSTEM -> {
+                    binding.btn.setTextRes(R.string.label_start_tracking)
+                    toastShort(R.string.message_tracking_become_unavailable)
                 }
-                SimpleLocTracker.StopState.STOPPED_BY_USER -> "Location tracking stopped by user".also {
-                    binding.btn.text = "Start Tracking"
+                SimpleLocTracker.StopState.STOPPED_BY_USER -> {
+                    binding.btn.setTextRes(R.string.label_start_tracking)
+                    toastShort(R.string.message_tracking_stopped_by_user)
                 }
             }
-            toastShort(message)
         }
         onLocationFound { _, location, _ ->
             currentLocation = location
             btnShowLocation.visible()
         }
         onPermissionRationaleCanceled {
-            toastShort("Location Permissions canceled by user")
+            toastShort(R.string.message_permission_canceled)
         }
         onOpenPermissionSettingCanceled {
-            toastShort("User do not want to open permission setting")
+            toastShort(R.string.message_permission_setting_canceled)
         }
         onLocationServiceRepairError {
-            toastShort("Location service is not available")
+            toastShort(R.string.message_location_service_is_not_available)
         }
-        onUnresolvableError {_, exception ->
-            toastShort("Location Setting ERROR: ${exception.message}")
+        onUnresolvableError { _, exception ->
+            toastShort(getString(R.string.message_location_setting_error, exception.message))
         }
     }
 
     //endregion
-
     //region Lifecycle Callback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
-        binding.btn.onSingleClick {
+        binding.btn.setOnClickListener {
             locationTracker.toggle()
         }
-        binding.btnShowLocation.onSingleClick {
+        binding.btnShowLocation.setOnClickListener {
             currentLocation?.openInGMaps(this)
         }
         binding.btnShowLocation.visibleIf { currentLocation != null }

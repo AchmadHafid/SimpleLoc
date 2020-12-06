@@ -4,7 +4,8 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.observe
+import io.github.achmadhafid.sample_app.PREFERENCE_KEY_SERVICE_STATUS
+import io.github.achmadhafid.sample_app.PREFERENCE_KEY_THEME
 import io.github.achmadhafid.sample_app.R
 import io.github.achmadhafid.sample_app.databinding.ActivityServiceDemoBinding
 import io.github.achmadhafid.simpleloc.SimpleLocClient
@@ -15,15 +16,15 @@ import io.github.achmadhafid.zpack.extension.intent
 import io.github.achmadhafid.zpack.extension.stopService
 import io.github.achmadhafid.zpack.extension.toastShort
 import io.github.achmadhafid.zpack.extension.toggleTheme
-import io.github.achmadhafid.zpack.extension.view.onSingleClick
+import io.github.achmadhafid.zpack.extension.view.setTextRes
 
 class ServiceDemoActivity : AppCompatActivity(), SimpleLocClient, SimplePref {
 
     //region Preference
 
-    private var appTheme: Int? by simplePref("app_theme")
+    private var appTheme: Int? by simplePref(PREFERENCE_KEY_THEME)
+    private val serviceStatus: Int? by simplePref(PREFERENCE_KEY_SERVICE_STATUS)
     private var keepServiceAlive by simplePref { false }
-    private val serviceStatus: Int? by simplePref("service_status")
 
     //endregion
     //region View Binding
@@ -40,22 +41,21 @@ class ServiceDemoActivity : AppCompatActivity(), SimpleLocClient, SimplePref {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
-        binding.btn.onSingleClick {
+        binding.btn.setOnClickListener {
             if (serviceStatus == DemoLocationService.STATUS_RUNNING)
                 stopService<DemoLocationService>()
-            else
-                startActivity(intent<LocationServiceLauncherActivity>())
+            else startActivity(intent<LocationServiceLauncherActivity>())
         }
 
         simplePrefLiveData(serviceStatus, ::serviceStatus).observe(this) {
-            binding.btn.text = when (it) {
-                DemoLocationService.STATUS_RUNNING -> "Stop Location Service"
-                else -> "Start Location Service"
-            }
+            binding.btn.setTextRes(
+                if (it == DemoLocationService.STATUS_RUNNING) R.string.label_stop_location_service
+                else R.string.label_start_location_service
+            )
             when (it) {
-                DemoLocationService.STATUS_PERMISSION_CANCELED -> toastShort("Permissions required")
-                DemoLocationService.STATUS_REPAIR_ERROR -> toastShort("Location Service unavailable")
-                DemoLocationService.STATUS_UNKNOWN_ERROR -> toastShort("Unknown Error")
+                DemoLocationService.STATUS_PERMISSION_CANCELED -> toastShort(R.string.message_permission_required)
+                DemoLocationService.STATUS_REPAIR_ERROR -> toastShort(R.string.message_location_service_unavailable)
+                DemoLocationService.STATUS_UNKNOWN_ERROR -> toastShort(R.string.message_error_unknown)
             }
         }
     }
@@ -85,7 +85,9 @@ class ServiceDemoActivity : AppCompatActivity(), SimpleLocClient, SimplePref {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (!keepServiceAlive) stopService<DemoLocationService>()
+        if (!keepServiceAlive) {
+            stopService<DemoLocationService>()
+        }
     }
 
     //endregion

@@ -4,7 +4,6 @@ package io.github.achmadhafid.simpleloc
 
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.OnLifecycleEvent
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -19,7 +18,7 @@ class SimpleLocTrackerFragment(
     override val settingsClient: SettingsClient by lazy { fragment.getSettingsClient() }
 
     init {
-        fragment.viewLifecycleOwnerLiveData.observe(fragment, Observer {
+        fragment.viewLifecycleOwnerLiveData.observe(fragment, {
             fragment.viewLifecycleOwnerLiveData.removeObservers(fragment)
             lifecycleOwner = it
             observeLocationPermissionSettingsResult()

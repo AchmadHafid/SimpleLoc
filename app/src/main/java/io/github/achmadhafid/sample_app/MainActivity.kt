@@ -13,13 +13,12 @@ import io.github.achmadhafid.simplepref.SimplePref
 import io.github.achmadhafid.simplepref.simplePref
 import io.github.achmadhafid.zpack.extension.intent
 import io.github.achmadhafid.zpack.extension.toggleTheme
-import io.github.achmadhafid.zpack.extension.view.onSingleClick
 
-class MainActivity: AppCompatActivity(), SimpleLocClient, SimplePref {
+class MainActivity : AppCompatActivity(), SimpleLocClient, SimplePref {
 
     //region Preference
 
-    private var appTheme: Int? by simplePref("app_theme")
+    private var appTheme: Int? by simplePref(PREFERENCE_KEY_THEME)
 
     //endregion
     //region View Binding
@@ -37,13 +36,13 @@ class MainActivity: AppCompatActivity(), SimpleLocClient, SimplePref {
         setSupportActionBar(binding.toolbar)
 
         binding.apply {
-            btnDemoActivity.onSingleClick {
+            btnDemoActivity.setOnClickListener {
                 startActivity(intent<DemoActivity>())
             }
-            btnDemoFragment.onSingleClick {
+            btnDemoFragment.setOnClickListener {
                 startActivity(intent<FragmentDemoActivity>())
             }
-            btnDemoService.onSingleClick {
+            btnDemoService.setOnClickListener {
                 startActivity(intent<ServiceDemoActivity>())
             }
         }

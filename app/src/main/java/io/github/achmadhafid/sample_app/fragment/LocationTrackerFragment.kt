@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import com.google.android.gms.location.LocationRequest
 import io.github.achmadhafid.sample_app.Dialog
 import io.github.achmadhafid.sample_app.R
+import io.github.achmadhafid.sample_app.TRACKING_FASTEST_INTERVAL
+import io.github.achmadhafid.sample_app.TRACKING_INTERVAL
 import io.github.achmadhafid.sample_app.databinding.FragmentLocationTrackerBinding
 import io.github.achmadhafid.simpleloc.SimpleLocClient
 import io.github.achmadhafid.simpleloc.SimpleLocTracker
@@ -24,55 +26,59 @@ import io.github.achmadhafid.simpleloc.onUnresolvableError
 import io.github.achmadhafid.simpleloc.simpleLocTracker
 import io.github.achmadhafid.simpleloc.toggle
 import io.github.achmadhafid.simpleloc.withRequest
+import io.github.achmadhafid.zpack.delegate.viewLifecycleVar
 import io.github.achmadhafid.zpack.extension.toastShort
+import io.github.achmadhafid.zpack.extension.view.setTextRes
 
-@Suppress("MagicNumber")
-class LocationTrackerFragment : Fragment(R.layout.fragment_location_tracker), SimpleLocClient {
+class LocationTrackerFragment : Fragment(), SimpleLocClient {
 
     //region View Binding
 
-    private var _binding: FragmentLocationTrackerBinding? = null
+    private var _binding: FragmentLocationTrackerBinding? by viewLifecycleVar()
     private val binding get() = _binding!!
 
     //endregion
     //region Location Tracker
 
     private val locationTracker = simpleLocTracker {
-        isAutoStart    = true
+        isAutoStart = true
         resolveAddress = true
         withRequest {
-            priority        = LocationRequest.PRIORITY_HIGH_ACCURACY
-            interval        = 5 * 1000L
-            fastestInterval = 3 * 1000L
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            interval = TRACKING_INTERVAL
+            fastestInterval = TRACKING_FASTEST_INTERVAL
         }
         onRunning { _, isRestarted ->
-            binding.btn.text = "Stop Tracker"
-            toastShort("Location tracking " + if (isRestarted) "re-started" else "started")
+            binding.btn.setTextRes(R.string.label_stop_tracking)
+            toastShort(
+                if (isRestarted) R.string.message_tracking_restarted
+                else R.string.message_tracking_started
+            )
         }
         onStopped { _, state ->
-            binding.btn.text = "Start Tracker"
+            binding.btn.setTextRes(R.string.label_start_tracking)
             val message = when (state) {
-                SimpleLocTracker.StopState.PAUSED_BY_LIFECYCLE    -> "Location tracking paused"
-                SimpleLocTracker.StopState.DESTROYED_BY_LIFECYCLE -> "Location tracking destroyed by lifecycle"
-                SimpleLocTracker.StopState.STOPPED_BY_SYSTEM      -> "Location tracking become unavailable"
-                SimpleLocTracker.StopState.STOPPED_BY_USER        -> "Location tracking stopped by user"
+                SimpleLocTracker.StopState.PAUSED_BY_LIFECYCLE -> R.string.message_tracking_paused
+                SimpleLocTracker.StopState.DESTROYED_BY_LIFECYCLE -> R.string.message_tracking_destroyed_by_lifecycle
+                SimpleLocTracker.StopState.STOPPED_BY_SYSTEM -> R.string.message_tracking_become_unavailable
+                SimpleLocTracker.StopState.STOPPED_BY_USER -> R.string.message_tracking_stopped_by_user
             }
             toastShort(message)
         }
         onLocationFound { _, location, addresses ->
-            toastShort("Location found, accuracy: ${location.accuracy}, total address: ${addresses.size}")
+            toastShort(getString(R.string.label_location_found, location.accuracy, addresses.size))
         }
         onPermissionRationaleCanceled {
-            toastShort("Location Permissions canceled by user")
+            toastShort(R.string.message_permission_canceled)
         }
         onOpenPermissionSettingCanceled {
-            toastShort("User do not want to open permission setting")
+            toastShort(R.string.message_permission_setting_canceled)
         }
         onLocationServiceRepairError {
-            toastShort("Location service is not available")
+            toastShort(R.string.message_location_service_is_not_available)
         }
-        onUnresolvableError {_, exception ->
-            toastShort("Location Setting ERROR: ${exception.message}")
+        onUnresolvableError { _, exception ->
+            toastShort(getString(R.string.message_location_setting_error, exception.message))
         }
     }
 
@@ -84,7 +90,7 @@ class LocationTrackerFragment : Fragment(R.layout.fragment_location_tracker), Si
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentLocationTrackerBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -92,11 +98,6 @@ class LocationTrackerFragment : Fragment(R.layout.fragment_location_tracker), Si
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.btn.setOnClickListener { locationTracker.toggle() }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     @Suppress("DEPRECATION")
@@ -118,8 +119,6 @@ class LocationTrackerFragment : Fragment(R.layout.fragment_location_tracker), Si
         super.onActivityResult(requestCode, resultCode, data)
         onLocationServiceRepairResult(requestCode, resultCode, locationTracker)
     }
-
-
 
     //endregion
 

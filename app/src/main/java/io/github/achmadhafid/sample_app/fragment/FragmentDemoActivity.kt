@@ -5,17 +5,19 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import io.github.achmadhafid.sample_app.PREFERENCE_KEY_THEME
 import io.github.achmadhafid.sample_app.R
 import io.github.achmadhafid.sample_app.databinding.ActivityFragmentDemoBinding
 import io.github.achmadhafid.simplepref.SimplePref
 import io.github.achmadhafid.simplepref.simplePref
 import io.github.achmadhafid.zpack.extension.toggleTheme
+import io.github.achmadhafid.zpack.extension.view.setTextRes
 
 class FragmentDemoActivity : AppCompatActivity(), SimplePref {
 
     //region Preference
 
-    private var appTheme: Int? by simplePref("app_theme")
+    private var appTheme: Int? by simplePref(PREFERENCE_KEY_THEME)
 
     //endregion
     //region View Binding
@@ -34,11 +36,10 @@ class FragmentDemoActivity : AppCompatActivity(), SimplePref {
 
         with(supportFragmentManager) {
             fun checkStack() {
-                if (backStackEntryCount == 0) {
-                    binding.btn.text = "Show Fragment"
-                } else {
-                    binding.btn.text = "Remove Fragment"
-                }
+                binding.btn.setTextRes(
+                    if (backStackEntryCount == 0) R.string.label_show_fragment
+                    else R.string.label_remove_fragment
+                )
             }
             checkStack()
             addOnBackStackChangedListener {
@@ -63,6 +64,7 @@ class FragmentDemoActivity : AppCompatActivity(), SimplePref {
         supportFragmentManager.findFragmentById(R.id.fragment_holder)
             ?.onActivityResult(requestCode, resultCode, data)
     }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_toolbar, menu)
         return super.onCreateOptionsMenu(menu)

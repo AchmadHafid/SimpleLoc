@@ -19,7 +19,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/small"
-            android:text="Detecting Location..."
+            android:text="@string/label_detecting_location"
             android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
 
         <com.google.android.material.button.MaterialButton
@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/small"
-            android:text="Stop Tracking" />
+            android:text="@string/label_stop_tracking" />
 
     </LinearLayout>
 
