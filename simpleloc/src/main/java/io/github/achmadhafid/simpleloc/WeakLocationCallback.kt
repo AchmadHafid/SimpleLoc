@@ -22,6 +22,7 @@ private class WeakLocationCallback(locationCallback: LocationCallback) : Locatio
 
 }
 
+@Suppress("unused")
 private fun createWeakLocationCallback(callback: (Location) -> Unit) =
     WeakLocationCallback(object : LocationCallback() {
         override fun onLocationResult(locationResult: LocationResult?) {

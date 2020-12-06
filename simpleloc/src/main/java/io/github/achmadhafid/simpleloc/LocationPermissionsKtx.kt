@@ -4,6 +4,7 @@ package io.github.achmadhafid.simpleloc
 
 import android.Manifest
 import android.content.Context
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import io.github.achmadhafid.lottie_dialog.core.LottieConfirmationDialog
@@ -18,10 +19,18 @@ import io.github.achmadhafid.zpack.extension.openAppDetailSettings
 import io.github.achmadhafid.zpack.extension.requestPermissionCompat
 import io.github.achmadhafid.zpack.extension.shouldShowRequestPermissionRationales
 
-private val LocationPermissions = arrayOf(
-    Manifest.permission.ACCESS_FINE_LOCATION,
-    Manifest.permission.ACCESS_COARSE_LOCATION
-)
+private val LocationPermissions = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+    arrayOf(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION,
+        Manifest.permission.ACCESS_BACKGROUND_LOCATION
+    )
+} else {
+    arrayOf(
+        Manifest.permission.ACCESS_FINE_LOCATION,
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    )
+}
 
 //region Permission Checker
 
