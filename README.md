@@ -8,17 +8,17 @@ This library is intended to help you to use and manage location tracking inside 
 
 ![image](https://drive.google.com/uc?export=download&id=1rXcO_5b3zFFF-ztLOp82Yzc4kAlMU4sg)
 <br />
-[**Download Demo App Here**](https://github.com/AchmadHafid/SimpleLoc/releases/download/v1.0.3/SimpleLoc_v1.0.3_Demo.apk)
+[**Download Demo App Here**](https://github.com/AchmadHafid/SimpleLoc/releases/download/v1.3.0/SimpleLoc_v1.3.0_Demo.apk)
 
 
 Key Features
 --------
-* __Kotlin__ with __DSL__ for coding pleasure!
-* __Lifecycle aware__ location tracking. Just defined it in your `Activity` / `Fragment` / `LifecycleService` and you are good to go.
-* Manage __permission request state & UI__ out of the box! More focus on your business use case, less boilerplate code.
-* Automatically check for location setting. Be confident that GPS always enabled if you specicfy it in the config.
+* __Kotlin__ __DSL__ based configurations
+* __Lifecycle aware__ location tracking. Automatically stop & restart tracking based on lifecycle events.
+* Manage __permission request state & UI__ out of the box! using __LottieDialog__.
+* Automatically check for location setting. Be confident that GPS is always enabled if you specify it in the config.
 * Full control on every state changes when you need it.
-* __Bonus 1__: It can resolve addresses automatically instead just providing location.
+* __Bonus 1__: It can resolve addresses automatically instead just providing LatLng location.
 * __Bonus 2__: There is extension function on `Location` to open it directly on Google Maps app.
 
 
