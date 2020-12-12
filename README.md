@@ -13,6 +13,7 @@ This library is intended to help you to use and manage location tracking inside 
 
 Key Features
 --------
+* Support __Android 10 & 11__ Location permission model updates (e.g. background location access)
 * Configure location tracker using a simple __Kotlin__ __DSL__
 * __Lifecycle aware__ location tracking. Automatically stop & restart the tracker based on lifecycle events.
 * Manage __permission request state & UI__ out of the box! Powered by [**LottieDialog**](https://github.com/AchmadHafid/LottieDialog).
